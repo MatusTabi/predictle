@@ -8,7 +8,7 @@ import { usePathname } from 'next/navigation';
 export const links = [
     { name: 'Dashboard', href: '/dashboard', icon: LayoutDashboard },
     { name: 'Leaderboard', href: '#', icon: Trophy },
-    { name: 'Tournament', href: '#', icon: Award },
+    { name: 'Tournament', href: '/tournament', icon: Award },
     { name: 'Rules', href: '#', icon: Gavel },
 ];
 
