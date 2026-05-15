@@ -4,27 +4,30 @@ import { useState } from 'react';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { Button } from '../ui/button';
 
-const DateNavigator = () => {
-    const [date, setDate] = useState(new Date());
+type DateNavigatorProps = {
+    value: Date;
+    onChange: (date: Date) => void;
+};
 
+const DateNavigator = ({ value, onChange }: DateNavigatorProps) => {
     const changeDate = (days: number) => {
-        const newDate = new Date(date);
+        const newDate = new Date(value);
         newDate.setDate(newDate.getDate() + days);
-        setDate(newDate);
+        onChange(newDate);
     };
 
     return (
         <div className="flex items-center gap-4 mb-4">
             <Button
                 onClick={() => changeDate(-1)}
-                className="bg-tertiary-container text-on-tertiary-container"
+                className="bg-tertiary-container text-on-tertiary-container cursor-pointer"
             >
                 <ChevronLeft />
             </Button>
-            <span className="text-lg">{date.toLocaleDateString()}</span>
+            <span className="text-lg">{value.toLocaleDateString()}</span>
             <Button
                 onClick={() => changeDate(1)}
-                className="bg-tertiary-container text-on-tertiary-container"
+                className="bg-tertiary-container text-on-tertiary-container cursor-pointer"
             >
                 <ChevronRight />
             </Button>
