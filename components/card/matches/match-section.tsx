@@ -11,8 +11,8 @@ const MatchSection = ({ time, isLive }: MatchSectionProps) => (
             {time}
         </span>
         <div className="gap-4 flex w-full">
-            <MatchCard isLive={isLive} />
-            <MatchCard isLive={isLive} />
+            <MatchCard isLive={isLive} predicted={true} />
+            <MatchCard isLive={isLive} predicted={false} />
         </div>
     </div>
 );
