@@ -1,24 +1,32 @@
 'use client';
 
 import { Button } from '@/components/ui/button';
+import { LiveMatchTag, OpenMatchTag, PredictedMatchTag } from './match-tag';
 
 type MatchCardProps = {
     isLive: boolean;
+    predicted: boolean;
 };
 
-const MatchCard = ({ isLive }: MatchCardProps) => (
-    <div className="bg-primary-container border-inverse-on-surface border rounded-lg p-4 flex flex-col flex-1">
-        <div className="flex justify-between">
-            <h1 className="font-semibold text-lg">Group A</h1>
+const MatchCard = ({ isLive, predicted }: MatchCardProps) => (
+    <div className="bg-primary-container border-inverse-on-surface border rounded-lg p-4 flex flex-col flex-1 relative">
+        <div className="absolute top-0 right-0 flex items-center">
             {isLive ? (
-                <div className="flex items-center gap-2">
-                    <div className="h-4 w-4 animate-pulse rounded-full bg-tertiary-container" />
-                    <span className="text-tertiary-container">LIVE</span>
-                </div>
+                <>
+                    <LiveMatchTag
+                        className={predicted ? 'rounded-tr-none' : undefined}
+                    />
+                    {predicted && (
+                        <PredictedMatchTag className="rounded-bl-none" />
+                    )}
+                </>
+            ) : predicted ? (
+                <PredictedMatchTag />
             ) : (
-                <span className="text-sm">SOON</span>
+                <OpenMatchTag />
             )}
         </div>
+        <h1 className="font-semibold text-lg">Group A</h1>
         <div className="flex gap-4 items-center justify-center my-4">
             <span>Canada</span>
             <div className="flex gap-2 items-center">
@@ -34,12 +42,13 @@ const MatchCard = ({ isLive }: MatchCardProps) => (
             </div>
             <span>Sweden</span>
         </div>
+
         {!isLive && (
             <Button
                 type="submit"
                 className="mt-auto bg-tertiary-container rounded-md border-none text-on-tertiary-container"
             >
-                Submit Predict
+                Submit Prediction
             </Button>
         )}
     </div>
