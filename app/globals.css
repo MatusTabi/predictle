@@ -37,8 +37,8 @@
 
   --tertiary: #832600;
   --on-tertiary: #ffdbd0;
-  --tertiary-container: #ffb59d;
-  --on-tertiary-container: #5d1900;
+  --tertiary-container: #5d1900;
+  --on-tertiary-container: #ffb59d;
 
   --error: #ba1a1a;
   --on-error: #ffffff;
@@ -154,8 +154,8 @@
 
   --tertiary: #ffb59d;
   --on-tertiary: #5d1900;
-  --tertiary-container: #350a00;
-  --on-tertiary-container: #df551f;
+  --tertiary-container: #df551f;
+  --on-tertiary-container: #350a00;
 
   --error: #ffb4ab;
   --on-error: #690005;
