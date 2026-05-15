@@ -1,4 +1,4 @@
-import { MatchSchema, MatchType } from './schema';
+import { MatchSchema } from './schema';
 import { MatchDTO } from './types';
 
 export const mapMatchTypeToMatchDTO = (matches: MatchSchema[]): MatchDTO[] => {
@@ -8,8 +8,12 @@ export const mapMatchTypeToMatchDTO = (matches: MatchSchema[]): MatchDTO[] => {
         homeScore: match.intHomeScore,
         awayScore: match.intAwayScore,
         startTime: match.strTimeLocal,
+        date: match.dateEventLocal,
         isLive:
-            new Date(match.strTimeLocal) <= new Date() &&
+            new Date(match.dateEventLocal) <= new Date() &&
             (match.intHomeScore === null || match.intAwayScore === null),
+        hasEnded:
+            new Date(match.dateEventLocal) < new Date() ||
+            (match.intHomeScore !== null && match.intAwayScore !== null),
     }));
 };
