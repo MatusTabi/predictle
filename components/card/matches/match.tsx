@@ -2,6 +2,7 @@
 
 import { Button } from '@/components/ui/button';
 import { LiveMatchTag, OpenMatchTag, PredictedMatchTag } from './match-tag';
+import { cn } from '@/lib/utils';
 
 type MatchCardProps = {
     isLive: boolean;
@@ -30,27 +31,37 @@ const MatchCard = ({ isLive, predicted }: MatchCardProps) => (
         <div className="flex gap-4 items-center justify-center my-4">
             <span>Canada</span>
             <div className="flex gap-2 items-center">
-                <input
-                    className="bg-surface-container-lowest border-outline w-10 h-14 p-2 text-4xl font-bold text-center"
-                    placeholder="0"
-                />
-                -
-                <input
-                    className="bg-surface-container-lowest border-outline w-10 h-14 p-2 text-4xl font-bold text-center"
-                    placeholder="0"
-                />
+                {isLive || predicted ? (
+                    <>
+                        <span className="text-4xl font-bold">2</span>-
+                        <span className="text-4xl font-bold">1</span>
+                    </>
+                ) : (
+                    <>
+                        <input
+                            className="bg-surface-container-lowest border-outline w-10 h-14 p-2 text-4xl font-bold text-center"
+                            placeholder="0"
+                        />
+                        -
+                        <input
+                            className="bg-surface-container-lowest border-outline w-10 h-14 p-2 text-4xl font-bold text-center"
+                            placeholder="0"
+                        />
+                    </>
+                )}
             </div>
             <span>Sweden</span>
         </div>
 
-        {!isLive && (
-            <Button
-                type="submit"
-                className="mt-auto bg-tertiary-container rounded-md border-none text-on-tertiary-container"
-            >
-                Submit Prediction
-            </Button>
-        )}
+        <Button
+            type="submit"
+            className={cn(
+                'mt-auto bg-tertiary-container rounded-md border-none text-on-tertiary-container',
+                (predicted || isLive) && 'cursor-not-allowed opacity-50',
+            )}
+        >
+            Submit Prediction
+        </Button>
     </div>
 );
 
