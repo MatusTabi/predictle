@@ -1,17 +1,18 @@
 'use client';
 
 import { cn } from '@/lib/utils';
+import { Award, Gavel, LayoutDashboard, Trophy } from 'lucide-react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 
-const links = [
-    { name: 'Dashboard', href: '/dashboard' },
-    { name: 'Leaderboard', href: '/leaderboard' },
-    { name: 'Tournament', href: '/tournament' },
-    { name: 'Rules', href: '/rules' },
+export const links = [
+    { name: 'Dashboard', href: '/dashboard', icon: LayoutDashboard },
+    { name: 'Leaderboard', href: '/leaderboard', icon: Trophy },
+    { name: 'Tournament', href: '/tournament', icon: Award },
+    { name: 'Rules', href: '/rules', icon: Gavel },
 ];
 
-const Actions = () => {
+const Links = () => {
     const pathName = usePathname();
 
     return (
@@ -38,4 +39,4 @@ const Actions = () => {
     );
 };
 
-export default Actions;
+export default Links;
