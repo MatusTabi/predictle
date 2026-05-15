@@ -13,7 +13,7 @@ const MatchCard = ({ isOpen }: MatchCardProps) => (
             {isOpen ? (
                 <div className="flex items-center gap-2">
                     <div className="h-4 w-4 animate-pulse rounded-full bg-tertiary-container" />
-                    <span className="text-tertiary-container">OPEN</span>
+                    <span className="text-tertiary-container">LIVE</span>
                 </div>
             ) : (
                 <span className="text-sm">SOON</span>
