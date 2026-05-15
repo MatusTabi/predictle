@@ -1,16 +1,23 @@
-import { PropsWithChildren } from 'react';
+'use client';
+
+import { PropsWithChildren, useState } from 'react';
 import { ThemeProvider } from './theme-provider';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
 const Providers = ({ children }: PropsWithChildren) => {
+    const [queryClient] = useState(() => new QueryClient());
+
     return (
-        <ThemeProvider
-            attribute="class"
-            defaultTheme="system"
-            enableSystem
-            disableTransitionOnChange
-        >
-            {children}
-        </ThemeProvider>
+        <QueryClientProvider client={queryClient}>
+            <ThemeProvider
+                attribute="class"
+                defaultTheme="system"
+                enableSystem
+                disableTransitionOnChange
+            >
+                {children}
+            </ThemeProvider>
+        </QueryClientProvider>
     );
 };
 
