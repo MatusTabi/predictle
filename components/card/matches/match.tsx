@@ -3,14 +3,14 @@
 import { Button } from '@/components/ui/button';
 
 type MatchCardProps = {
-    isOpen: boolean;
+    isLive: boolean;
 };
 
-const MatchCard = ({ isOpen }: MatchCardProps) => (
+const MatchCard = ({ isLive }: MatchCardProps) => (
     <div className="bg-primary-container border-inverse-on-surface border rounded-lg p-4 flex flex-col flex-1">
         <div className="flex justify-between">
             <h1 className="font-semibold text-lg">Group A</h1>
-            {isOpen ? (
+            {isLive ? (
                 <div className="flex items-center gap-2">
                     <div className="h-4 w-4 animate-pulse rounded-full bg-tertiary-container" />
                     <span className="text-tertiary-container">LIVE</span>
@@ -34,7 +34,7 @@ const MatchCard = ({ isOpen }: MatchCardProps) => (
             </div>
             <span>Sweden</span>
         </div>
-        {isOpen && (
+        {!isLive && (
             <Button
                 type="submit"
                 className="mt-auto bg-tertiary-container rounded-md border-none text-on-tertiary-container"
