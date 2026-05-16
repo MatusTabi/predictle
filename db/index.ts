@@ -10,6 +10,13 @@ const client = createClient({
 
 export const db = drizzle(client, { schema });
 
-export { matches } from './schema';
+export {
+    matches,
+    users,
+    accounts,
+    sessions,
+    verificationToken,
+    predictions,
+} from './schema';
 
-export type { Match } from './schema';
+export type { Match, DbUser, Prediction } from './schema';
