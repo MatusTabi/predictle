@@ -1,15 +1,20 @@
 'use client';
 
 import { Button } from '@/components/ui/button';
-import { LiveMatchTag, OpenMatchTag, PredictedMatchTag } from './match-tag';
+import {
+    FinishedTag,
+    LiveMatchTag,
+    OpenMatchTag,
+    PredictedMatchTag,
+} from './match-tag';
 import { cn } from '@/lib/utils';
 
 type MatchCardProps = {
     homeTeam: string;
     awayTeam: string;
 
-    homeScore: string | null;
-    awayScore: string | null;
+    homeScore: number | null;
+    awayScore: number | null;
 
     isLive: boolean;
     predicted: boolean;
@@ -38,6 +43,8 @@ const MatchCard = ({
                 </>
             ) : predicted ? (
                 <PredictedMatchTag />
+            ) : hasEnded ? (
+                <FinishedTag />
             ) : (
                 <OpenMatchTag />
             )}
@@ -49,7 +56,7 @@ const MatchCard = ({
             </span>
 
             <div className="flex gap-2 items-center justify-center h-12">
-                {isLive || predicted ? (
+                {hasEnded || isLive || predicted ? (
                     <div className="h-12 mx-2 flex items-center">
                         <span className="text-4xl font-bold">
                             {homeScore ?? '0'}
@@ -82,7 +89,8 @@ const MatchCard = ({
             type="submit"
             className={cn(
                 'mt-auto bg-tertiary-container rounded-md border-none text-on-tertiary-container',
-                (predicted || isLive) && 'cursor-not-allowed opacity-50',
+                (predicted || isLive || hasEnded) &&
+                    'cursor-not-allowed opacity-50',
             )}
         >
             Submit Prediction

@@ -1,6 +1,7 @@
 import z from 'zod';
 
 export const MatchSchema = z.object({
+    idEvent: z.string(),
     strHomeTeam: z.string().max(100),
     strAwayTeam: z.string().max(100),
     intHomeScore: z.string().nullable(),

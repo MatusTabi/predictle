@@ -2,8 +2,6 @@
 
 import { syncMatchesFromSportsDb } from './service';
 
-const getMatches = async () => {
-    return syncMatchesFromSportsDb();
+export const syncMatches = async () => {
+    return await syncMatchesFromSportsDb();
 };
-
-export { getMatches };

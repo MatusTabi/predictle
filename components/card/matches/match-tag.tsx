@@ -35,4 +35,10 @@ const OpenMatchTag = () => (
     </div>
 );
 
-export { LiveMatchTag, PredictedMatchTag, OpenMatchTag };
+const FinishedTag = () => (
+    <div className="bg-secondary text-on-secondary rounded-bl-lg rounded-tr-lg px-3 py-2 text-xs font-semibold">
+        FINISHED
+    </div>
+);
+
+export { LiveMatchTag, PredictedMatchTag, OpenMatchTag, FinishedTag };

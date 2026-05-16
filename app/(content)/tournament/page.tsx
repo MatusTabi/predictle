@@ -1,8 +1,8 @@
-import { getMatches } from '@/backend/matches/action';
+import { getAllMatches } from '@/backend/matches/service';
 import TournamentContent from '@/components/tournament/content';
 
 const TournamentPage = async () => {
-    const matches = await getMatches();
+    const matches = await getAllMatches();
 
     return <TournamentContent matches={matches} />;
 };

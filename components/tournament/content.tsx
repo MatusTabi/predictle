@@ -13,7 +13,7 @@ type TournamentContentProps = {
 const TournamentContent = ({ matches }: TournamentContentProps) => {
     const [date, setDate] = useState<Date>(new Date());
 
-    console.log('Received matches:', matches);
+    console.log(matches);
 
     const filteredMatchesByDate = matches.filter((match) => {
         const matchDate = new Date(match.date);
@@ -45,6 +45,7 @@ const TournamentContent = ({ matches }: TournamentContentProps) => {
                             awayScore={match.awayScore}
                             isLive={match.isLive}
                             predicted={!!match.predicted}
+                            hasEnded={match.hasEnded}
                         />
                     ))}
                 </section>
