@@ -1,12 +1,25 @@
-import { syncMatchesFromSportsDb } from '@/backend/matches/service';
+import { NextResponse } from 'next/server';
 
-export async function GET() {
-    await syncMatchesFromSportsDb();
+export async function GET(request: Request) {
+    const isCron = request.headers.get('x-vercel-cron') === '1';
 
-    return new Response(
-        JSON.stringify({ message: 'Matches synced successfully' }),
-        {
-            headers: { 'Content-Type': 'application/json' },
+    if (!isCron) {
+        return NextResponse.json({ message: 'Forbidden' }, { status: 403 });
+    }
+
+    const response = await fetch(`${process.env.NEXTAUTH_URL}/api/internal`, {
+        headers: {
+            Authorization: `Bearer ${process.env.CRON_SECRET}`,
         },
-    );
+        cache: 'no-store',
+    });
+
+    if (!response.ok) {
+        return NextResponse.json(
+            { message: 'Cron failed: ' + response.statusText },
+            { status: 500 },
+        );
+    }
+
+    return NextResponse.json({ message: 'Sync started' }, { status: 200 });
 }
