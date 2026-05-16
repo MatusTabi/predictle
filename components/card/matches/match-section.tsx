@@ -1,18 +1,28 @@
+import { MatchDTO } from '@/backend/matches/types';
 import MatchCard from './match';
 
 type MatchSectionProps = {
-    time: string;
-    isLive: boolean;
+    match: MatchDTO[];
 };
 
-const MatchSection = ({ time, isLive }: MatchSectionProps) => (
+const MatchSection = ({ match }: MatchSectionProps) => (
     <div className="flex flex-col items-baseline mb-4">
         <span className="rounded-2xl bg-primary text-on-primary p-2 mb-4">
-            {time}
+            {match[0].startTime.slice(0, 5)}
         </span>
         <div className="gap-4 flex w-full">
-            <MatchCard isLive={isLive} predicted={true} />
-            <MatchCard isLive={isLive} predicted={false} />
+            {match.map((m) => (
+                <MatchCard
+                    key={m.id}
+                    homeTeam={m.homeTeam}
+                    awayTeam={m.awayTeam}
+                    homeScore={m.homeScore}
+                    awayScore={m.awayScore}
+                    isLive={m.isLive}
+                    predicted={!!m.predicted}
+                    hasEnded={m.hasEnded}
+                />
+            ))}
         </div>
     </div>
 );

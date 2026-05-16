@@ -22,3 +22,9 @@ export const syncMatchesFromSportsDb = async () => {
 export const getAllMatches = async () => {
     return dbMatchtoDtoList(await getAll());
 };
+
+export const getMatchesByDate = async (date: string) => {
+    const allMatches = await getAll();
+    const filteredMatches = allMatches.filter((match) => match.date === date);
+    return dbMatchtoDtoList(filteredMatches);
+};

@@ -38,7 +38,7 @@ const TournamentContent = ({ matches }: TournamentContentProps) => {
                 <section className="grid-cols-2 grid gap-4">
                     {filteredMatchesByDate.map((match) => (
                         <MatchCard
-                            key={`${match.homeTeam}-${match.awayTeam}-${match.date}`}
+                            key={match.id}
                             homeTeam={match.homeTeam}
                             awayTeam={match.awayTeam}
                             homeScore={match.homeScore}
