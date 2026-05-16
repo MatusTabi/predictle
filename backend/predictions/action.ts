@@ -2,6 +2,7 @@
 
 import { auth } from '@/auth/auth';
 import { submitPrediction } from './service';
+import { getMatchById } from '@/backend/matches/service';
 
 export type SubmitPredictionInput = {
     matchId: string;
@@ -25,5 +26,7 @@ export const submitPredictionAction = async (
         awayScore: payload.awayScore,
     });
 
-    return { success: true };
+    const match = await getMatchById(payload.matchId);
+
+    return { success: true, match };
 };
