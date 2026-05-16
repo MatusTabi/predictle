@@ -6,6 +6,8 @@ import {
     getAll,
     getAllWithUserPrediction,
     getByDateWithUserPrediction,
+    getById,
+    getByIdWithUserPrediction,
 } from './repository';
 import { dbMatchToDtoList, dbMatchWithPredictionToDtoList } from './mapper';
 
@@ -47,4 +49,24 @@ export const getMatchesByDate = async (date: string) => {
     const allMatches = await getAll();
     const filteredMatches = allMatches.filter((match) => match.date === date);
     return dbMatchToDtoList(filteredMatches);
+};
+
+export const getMatchById = async (matchId: string) => {
+    const session = await auth();
+
+    if (session?.user?.id) {
+        const row = await getByIdWithUserPrediction(session.user.id, matchId);
+        if (!row) {
+            return null;
+        }
+
+        return dbMatchWithPredictionToDtoList([row])[0] ?? null;
+    }
+
+    const match = await getById(matchId);
+    if (!match) {
+        return null;
+    }
+
+    return dbMatchToDtoList([match])[0] ?? null;
 };
