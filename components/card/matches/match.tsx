@@ -10,37 +10,26 @@ import {
 } from './match-tag';
 import { cn } from '@/lib/utils';
 import { useSubmitPredictionMutation } from '@/backend/predictions/mutation';
+import { MatchDTO } from '@/backend/matches/types';
+import LoadingSpinner from '@/components/ui/spinner';
 
 type MatchCardProps = {
-    matchId: string;
-    homeTeam: string;
-    awayTeam: string;
-
-    homeScore: number | null;
-    awayScore: number | null;
-
-    isLive: boolean;
-    predicted: boolean;
-    hasEnded?: boolean;
+    match: MatchDTO;
 };
 
-const MatchCard = ({
-    matchId,
-    homeTeam,
-    awayTeam,
-    homeScore,
-    awayScore,
-    isLive,
-    predicted,
-    hasEnded,
-}: MatchCardProps) => {
+const MatchCard = ({ match }: MatchCardProps) => {
+    const [currentMatch, setCurrentMatch] = useState(match);
     const [homePrediction, setHomePrediction] = useState('');
     const [awayPrediction, setAwayPrediction] = useState('');
-    const [isPredicted, setIsPredicted] = useState(predicted);
-    const submitPrediction = useSubmitPredictionMutation();
+    const { mutate, isPending } = useSubmitPredictionMutation();
 
     const canSubmit = () => {
-        if (isPredicted || isLive || hasEnded || submitPrediction.isPending) {
+        if (
+            currentMatch.predicted ||
+            currentMatch.isLive ||
+            currentMatch.hasEnded ||
+            isPending
+        ) {
             return false;
         }
 
@@ -59,15 +48,26 @@ const MatchCard = ({
             return;
         }
 
-        submitPrediction.mutate(
+        mutate(
             {
-                matchId,
+                matchId: currentMatch.id,
                 homeScore: Number(homePrediction),
                 awayScore: Number(awayPrediction),
             },
             {
-                onSuccess: () => {
-                    setIsPredicted(true);
+                onSuccess: (data) => {
+                    if (data?.match) {
+                        setCurrentMatch(data.match);
+                    } else {
+                        setCurrentMatch((prev) => ({
+                            ...prev,
+                            predicted: true,
+                            userPrediction: {
+                                homeScore: Number(homePrediction),
+                                awayScore: Number(awayPrediction),
+                            },
+                        }));
+                    }
                 },
             },
         );
@@ -76,40 +76,48 @@ const MatchCard = ({
     return (
         <div className="bg-primary-container border-inverse-on-surface border rounded-lg p-4 flex flex-col flex-1 relative">
             <div className="absolute top-0 right-0 flex items-center">
-                {isLive ? (
+                {currentMatch.isLive ? (
                     <>
                         <LiveMatchTag
                             className={
-                                isPredicted ? 'rounded-tr-none' : undefined
+                                currentMatch.predicted
+                                    ? 'rounded-tr-none'
+                                    : undefined
                             }
                         />
-                        {isPredicted && (
+                        {currentMatch.predicted && (
                             <PredictedMatchTag className="rounded-bl-none" />
                         )}
                     </>
-                ) : isPredicted ? (
+                ) : currentMatch.predicted ? (
                     <PredictedMatchTag />
-                ) : hasEnded ? (
+                ) : currentMatch.hasEnded ? (
                     <FinishedTag />
                 ) : (
                     <OpenMatchTag />
                 )}
             </div>
             <h1 className="font-semibold text-lg">Group A</h1>
-            <div className="grid grid-cols-[1fr_auto_1fr] items-center my-4 w-full">
+            <div className="grid grid-cols-[1fr_auto_1fr] items-center w-full">
                 <span className="justify-self-end text-right">
-                    {homeTeam.replace('Ice Hockey', '')}
+                    {currentMatch.homeTeam.replace(/ice\s+hockey/i, '')}
                 </span>
 
                 <div className="flex gap-2 items-center justify-center h-12">
-                    {hasEnded || isLive || isPredicted ? (
+                    {currentMatch.hasEnded ||
+                    currentMatch.isLive ||
+                    currentMatch.predicted ? (
                         <div className="h-12 mx-2 flex items-center">
                             <span className="text-4xl font-bold">
-                                {homeScore ?? '0'}
+                                {currentMatch.isLive || currentMatch.hasEnded
+                                    ? (currentMatch.homeScore ?? '0')
+                                    : ''}
                             </span>
                             <span className="mx-2">-</span>
                             <span className="text-4xl font-bold">
-                                {awayScore ?? '0'}
+                                {currentMatch.isLive || currentMatch.hasEnded
+                                    ? (currentMatch.awayScore ?? '0')
+                                    : ''}
                             </span>
                         </div>
                     ) : (
@@ -135,8 +143,13 @@ const MatchCard = ({
                     )}
                 </div>
                 <span className="justify-self-start text-left">
-                    {awayTeam.replace(/Ice Hockey/i, '')}
+                    {currentMatch.awayTeam.replace(/ice\s+hockey/i, '')}
                 </span>
+            </div>
+            <div className="text-sm text-on-surface-variant mb-4 text-center">
+                {currentMatch.predicted
+                    ? `${currentMatch.userPrediction?.homeScore} - ${currentMatch.userPrediction?.awayScore}`
+                    : 'Not predicted'}
             </div>
 
             <Button
@@ -148,7 +161,7 @@ const MatchCard = ({
                     !canSubmit() && 'cursor-not-allowed opacity-50',
                 )}
             >
-                Submit Prediction
+                Submit Prediction {isPending && <LoadingSpinner />}
             </Button>
         </div>
     );

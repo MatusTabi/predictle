@@ -12,17 +12,7 @@ const MatchSection = ({ match }: MatchSectionProps) => (
         </span>
         <div className="gap-4 flex w-full">
             {match.map((m) => (
-                <MatchCard
-                    key={m.id}
-                    matchId={m.id}
-                    homeTeam={m.homeTeam}
-                    awayTeam={m.awayTeam}
-                    homeScore={m.homeScore}
-                    awayScore={m.awayScore}
-                    isLive={m.isLive}
-                    predicted={!!m.predicted}
-                    hasEnded={m.hasEnded}
-                />
+                <MatchCard key={m.id} match={m} />
             ))}
         </div>
     </div>
