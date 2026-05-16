@@ -37,6 +37,16 @@ export const getAll = async (): Promise<Match[]> => {
     return await db.select().from(matches);
 };
 
+export const getById = async (matchId: string): Promise<Match | null> => {
+    const rows = await db
+        .select()
+        .from(matches)
+        .where(eq(matches.id, matchId))
+        .limit(1);
+
+    return rows[0] ?? null;
+};
+
 type MatchWithUserPrediction = {
     match: Match;
     userPrediction: Prediction | null;
@@ -72,4 +82,24 @@ export const getByDateWithUserPrediction = async (
             ),
         )
         .where(eq(matches.date, date));
+};
+
+export const getByIdWithUserPrediction = async (
+    userId: string,
+    matchId: string,
+): Promise<MatchWithUserPrediction | null> => {
+    const rows = await db
+        .select({ match: matches, userPrediction: predictions })
+        .from(matches)
+        .leftJoin(
+            predictions,
+            and(
+                eq(predictions.matchId, matches.id),
+                eq(predictions.userId, userId),
+            ),
+        )
+        .where(eq(matches.id, matchId))
+        .limit(1);
+
+    return rows[0] ?? null;
 };
