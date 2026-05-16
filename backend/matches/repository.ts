@@ -1,15 +1,13 @@
-import { db, Match, matches } from '@/db';
+import { db, Match, matches, predictions, Prediction } from '@/db';
 import { MatchSchema } from './schema';
 import z from 'zod';
-import { sql } from 'drizzle-orm';
+import { and, eq, sql } from 'drizzle-orm';
 
 export const create = async (match: MatchSchema | MatchSchema[]) => {
     const parsedMatch = z.array(MatchSchema).or(MatchSchema).parse(match);
     const matchesArray = Array.isArray(parsedMatch)
         ? parsedMatch
         : [parsedMatch];
-
-    console.log('Creating matches:', matchesArray);
 
     const values = matchesArray.map((m) => ({
         externalId: m.idEvent,
@@ -37,4 +35,41 @@ export const create = async (match: MatchSchema | MatchSchema[]) => {
 
 export const getAll = async (): Promise<Match[]> => {
     return await db.select().from(matches);
+};
+
+type MatchWithUserPrediction = {
+    match: Match;
+    userPrediction: Prediction | null;
+};
+
+export const getAllWithUserPrediction = async (
+    userId: string,
+): Promise<MatchWithUserPrediction[]> => {
+    return await db
+        .select({ match: matches, userPrediction: predictions })
+        .from(matches)
+        .leftJoin(
+            predictions,
+            and(
+                eq(predictions.matchId, matches.id),
+                eq(predictions.userId, userId),
+            ),
+        );
+};
+
+export const getByDateWithUserPrediction = async (
+    userId: string,
+    date: string,
+): Promise<MatchWithUserPrediction[]> => {
+    return await db
+        .select({ match: matches, userPrediction: predictions })
+        .from(matches)
+        .leftJoin(
+            predictions,
+            and(
+                eq(predictions.matchId, matches.id),
+                eq(predictions.userId, userId),
+            ),
+        )
+        .where(eq(matches.date, date));
 };

@@ -12,9 +12,6 @@ type TournamentContentProps = {
 
 const TournamentContent = ({ matches }: TournamentContentProps) => {
     const [date, setDate] = useState<Date>(new Date());
-
-    console.log(matches);
-
     const filteredMatchesByDate = matches.filter((match) => {
         const matchDate = new Date(match.date);
 
@@ -39,6 +36,7 @@ const TournamentContent = ({ matches }: TournamentContentProps) => {
                     {filteredMatchesByDate.map((match) => (
                         <MatchCard
                             key={match.id}
+                            matchId={match.id}
                             homeTeam={match.homeTeam}
                             awayTeam={match.awayTeam}
                             homeScore={match.homeScore}

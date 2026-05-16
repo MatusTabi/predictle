@@ -14,6 +14,7 @@ const MatchSection = ({ match }: MatchSectionProps) => (
             {match.map((m) => (
                 <MatchCard
                     key={m.id}
+                    matchId={m.id}
                     homeTeam={m.homeTeam}
                     awayTeam={m.awayTeam}
                     homeScore={m.homeScore}

@@ -1,7 +1,13 @@
 import { sportsDbFetch } from '@/lib/sportsdb/sportdb.client';
 import { MatchSchemaResponse } from './schema';
-import { create, getAll } from './repository';
-import { dbMatchtoDtoList } from './mapper';
+import { auth } from '@/auth/auth';
+import {
+    create,
+    getAll,
+    getAllWithUserPrediction,
+    getByDateWithUserPrediction,
+} from './repository';
+import { dbMatchToDtoList, dbMatchWithPredictionToDtoList } from './mapper';
 
 export const syncMatchesFromSportsDb = async () => {
     const data = await sportsDbFetch(
@@ -20,11 +26,25 @@ export const syncMatchesFromSportsDb = async () => {
 };
 
 export const getAllMatches = async () => {
-    return dbMatchtoDtoList(await getAll());
+    const session = await auth();
+
+    if (session?.user?.id) {
+        const rows = await getAllWithUserPrediction(session.user.id);
+        return dbMatchWithPredictionToDtoList(rows);
+    }
+
+    return dbMatchToDtoList(await getAll());
 };
 
 export const getMatchesByDate = async (date: string) => {
+    const session = await auth();
+
+    if (session?.user?.id) {
+        const rows = await getByDateWithUserPrediction(session.user.id, date);
+        return dbMatchWithPredictionToDtoList(rows);
+    }
+
     const allMatches = await getAll();
     const filteredMatches = allMatches.filter((match) => match.date === date);
-    return dbMatchtoDtoList(filteredMatches);
+    return dbMatchToDtoList(filteredMatches);
 };
