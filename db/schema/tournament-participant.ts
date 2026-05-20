@@ -1,10 +1,11 @@
 import { integer, sqliteTable, text } from 'drizzle-orm/sqlite-core';
 
-export const leaderboard = sqliteTable('leaderboard', {
+export const tournamentParticipant = sqliteTable('tournament_participant', {
     id: text('id')
         .primaryKey()
         .$defaultFn(() => crypto.randomUUID()),
-    userId: text('userId').notNull(),
+    userId: text('userId').notNull().unique(),
+    // tournamentId: text('tournamentId').notNull().unique(),
 
     rank: integer('rank').notNull(),
     correctWinners: integer('correctWinners').default(0),
