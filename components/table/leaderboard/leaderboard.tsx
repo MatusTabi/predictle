@@ -10,8 +10,9 @@ import { Trophy } from 'lucide-react';
 import { sampleUsers, User } from './types';
 import { useReducer, useState } from 'react';
 import { cn } from '@/lib/utils';
+import { TournamentParticipantDTO } from '@/backend/leaderboard/types';
 
-const columnHelper = createColumnHelper<User>();
+const columnHelper = createColumnHelper<TournamentParticipantDTO>();
 
 const trophyColors: Record<number, string> = {
     1: 'text-yellow-500',
@@ -33,7 +34,7 @@ const columns = [
             </div>
         ),
     }),
-    columnHelper.accessor('name', {
+    columnHelper.accessor('userName', {
         header: 'Name',
         cell: (info) => (
             <span className="font-semibold">{info.getValue()}</span>
@@ -58,13 +59,19 @@ const columns = [
     columnHelper.accessor('totalPredictions', {
         header: 'Total Predictions',
     }),
-    columnHelper.accessor('totalPoints', {
+    columnHelper.accessor('points', {
         header: 'Total Points',
     }),
 ];
 
-const LeaderboardTable = () => {
-    const [data, setData] = useState<User[]>(() => [...sampleUsers]);
+type LeaderboardContentProps = {
+    participants: TournamentParticipantDTO[];
+};
+
+const LeaderboardTable = ({ participants }: LeaderboardContentProps) => {
+    const [data, setData] = useState<TournamentParticipantDTO[]>(() => [
+        ...participants,
+    ]);
     const rerender = useReducer(() => ({}), {})[1];
 
     const table = useReactTable({
@@ -73,7 +80,7 @@ const LeaderboardTable = () => {
         getCoreRowModel: getCoreRowModel(),
     });
 
-    return (
+    return participants.length > 0 ? (
         <table className="w-full border-collapse">
             <thead>
                 {table.getHeaderGroups().map((headerGroup) => (
@@ -112,6 +119,10 @@ const LeaderboardTable = () => {
                 ))}
             </tbody>
         </table>
+    ) : (
+        <div className="flex flex-col items-center justify-center py-10">
+            <p className="text-foreground/70">No participants yet.</p>
+        </div>
     );
 };
 
