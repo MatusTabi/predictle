@@ -5,6 +5,7 @@ export const tournamentParticipant = sqliteTable('tournament_participant', {
         .primaryKey()
         .$defaultFn(() => crypto.randomUUID()),
     userId: text('userId').notNull().unique(),
+    userName: text('userName').notNull(),
     // tournamentId: text('tournamentId').notNull().unique(),
 
     rank: integer('rank').notNull(),
@@ -13,3 +14,5 @@ export const tournamentParticipant = sqliteTable('tournament_participant', {
     totalPredictions: integer('totalPredictions').default(0),
     points: integer('points').default(0),
 });
+
+export type TournamentParticipant = typeof tournamentParticipant.$inferSelect;
