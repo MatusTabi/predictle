@@ -1,10 +1,19 @@
-import { getAllMatches } from '@/backend/matches/service';
-import TournamentContent from '@/components/tournament/content';
+import NoActiveGroups from '@/components/tournament/no-active-groups';
 
 const TournamentPage = async () => {
-    const matches = await getAllMatches();
+    const hasActiveGroups = false;
 
-    return <TournamentContent matches={matches} />;
+    return hasActiveGroups ? (
+        <div className="flex flex-col flex-1 gap-4">
+            <h1 className="text-3xl font-bold my-4">Your groups</h1>
+        </div>
+    ) : (
+        <NoActiveGroups />
+    );
+
+    // const matches = await getAllMatches();
+
+    // return <TournamentContent matches={matches} />;
 };
 
 export default TournamentPage;

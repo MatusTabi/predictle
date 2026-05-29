@@ -1,6 +1,7 @@
 import {
     ensureTournamentParticipation as ensureParticipation,
     getTournamentParticipants as getParticipants,
+    incrementParticipantTotalPredictions as incrementTotalPredictions,
 } from './repository';
 import { TournamentParticipantDTO } from './types';
 
@@ -16,4 +17,11 @@ export const getTournamentParticipants = async (
     tournamentId: number,
 ): Promise<TournamentParticipantDTO[]> => {
     return await getParticipants(tournamentId);
+};
+
+export const incrementParticipantTotalPredictions = async (
+    userId: string,
+    tournamentId: number,
+): Promise<void> => {
+    return await incrementTotalPredictions(userId, tournamentId);
 };

@@ -1,4 +1,7 @@
-import { ensureTournamentParticipation } from '../leaderboard/repository';
+import {
+    ensureTournamentParticipation,
+    incrementParticipantTotalPredictions,
+} from '../leaderboard/repository';
 import { getUsernameById } from '../user/repository';
 import { createPrediction } from './repository';
 import { PredictionRequestDTO } from './types';
@@ -10,16 +13,8 @@ export const submitPrediction = async (prediction: PredictionRequestDTO) => {
         throw new Error('User not found');
     }
 
-    const result = await ensureTournamentParticipation(
-        prediction.userId,
-        userName,
-    );
-
-    console.log('ensureTournamentParticipation result: ', result);
-
-    if (result.rows.length === 0) {
-        throw new Error('User is not participating in the tournament');
-    }
+    await ensureTournamentParticipation(prediction.userId, userName);
+    await incrementParticipantTotalPredictions(prediction.userId);
 
     return await createPrediction(prediction);
 };

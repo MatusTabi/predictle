@@ -44,9 +44,9 @@ const MatchCard = ({ match }: MatchCardProps) => {
     };
 
     const handleSubmit = () => {
-        if (!canSubmit()) {
-            return;
-        }
+        // if (!canSubmit()) {
+        //     return;
+        // }
 
         mutate(
             {
@@ -102,8 +102,26 @@ const MatchCard = ({ match }: MatchCardProps) => {
                 <span className="justify-self-end text-right">
                     {currentMatch.homeTeam.replace(/ice\s+hockey/i, '')}
                 </span>
-
-                <div className="flex gap-2 items-center justify-center h-12">
+                <div className="mx-2 flex items-center">
+                    <input
+                        className="bg-surface-container-lowest border-outline w-10 h-12 p-2 text-4xl font-bold text-center"
+                        placeholder="0"
+                        value={homePrediction}
+                        onChange={(event) =>
+                            setHomePrediction(event.target.value)
+                        }
+                    />
+                    <span className="mx-2">-</span>
+                    <input
+                        className="bg-surface-container-lowest border-outline w-10 h-12 p-2 text-4xl font-bold text-center"
+                        placeholder="0"
+                        value={awayPrediction}
+                        onChange={(event) =>
+                            setAwayPrediction(event.target.value)
+                        }
+                    />
+                </div>
+                {/* <div className="flex gap-2 items-center justify-center h-12">
                     {currentMatch.hasEnded ||
                     currentMatch.isLive ||
                     currentMatch.predicted ? (
@@ -141,7 +159,7 @@ const MatchCard = ({ match }: MatchCardProps) => {
                             />
                         </div>
                     )}
-                </div>
+                </div> */}
                 <span className="justify-self-start text-left">
                     {currentMatch.awayTeam.replace(/ice\s+hockey/i, '')}
                 </span>
@@ -155,10 +173,10 @@ const MatchCard = ({ match }: MatchCardProps) => {
             <Button
                 type="button"
                 onClick={handleSubmit}
-                disabled={!canSubmit()}
+                // disabled={!canSubmit()}
                 className={cn(
                     'mt-auto bg-tertiary-container rounded-md border-none text-on-tertiary-container',
-                    !canSubmit() && 'cursor-not-allowed opacity-50',
+                    // !canSubmit() && 'cursor-not-allowed opacity-50',
                 )}
             >
                 Submit Prediction {isPending && <LoadingSpinner />}

@@ -10,7 +10,7 @@ const Sidebar = () => {
     const pathName = usePathname();
 
     return (
-        <section className="w-1/4 h-fit self-start bg-primary-container border border-inverse-on-surface rounded-lg p-4 flex flex-col gap-4">
+        <section className="w-1/5 flex-none self-stretch bg-primary-container border-e border-inverse-on-surface p-4 flex flex-col gap-4">
             <Rank />
             <nav className="flex flex-col gap-2">
                 {links.map(({ name, href, icon: Icon }) => {

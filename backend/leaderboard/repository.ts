@@ -1,5 +1,5 @@
 import { db, tournamentParticipant } from '@/db';
-import { desc } from 'drizzle-orm';
+import { desc, eq, sql } from 'drizzle-orm';
 
 export const ensureTournamentParticipation = async (
     userId: string,
@@ -25,4 +25,21 @@ export const getTournamentParticipants = async (tournamentId?: number) => {
         .from(tournamentParticipant)
         // .where(eq(tournamentParticipant.tournamentId, tournamentId))
         .orderBy(desc(tournamentParticipant.points));
+};
+
+export const incrementParticipantTotalPredictions = async (
+    userId: string,
+    tournamentId?: number,
+) => {
+    await db
+        .update(tournamentParticipant)
+        .set({
+            totalPredictions: sql`${tournamentParticipant.totalPredictions} + 1`,
+        })
+        .where(
+            eq(
+                tournamentParticipant.userId,
+                userId,
+            ) /*, eq(tournamentParticipant.tournamentId, tournamentId)*/,
+        );
 };
