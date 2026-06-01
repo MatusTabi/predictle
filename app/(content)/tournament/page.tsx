@@ -1,4 +1,4 @@
-import NoActiveGroups from '@/components/tournament/no-active-groups';
+import NoActiveGroups from '@/components/tournament/no-active-tournament';
 
 const TournamentPage = async () => {
     const hasActiveGroups = false;
