@@ -2,10 +2,19 @@ import { Plus } from 'lucide-react';
 import { Button } from '../ui/button';
 import TournamentCard from './tournament-card';
 import NoTournamentComponent from './no-tournament-component';
+import ActiveTournamentComponent from './active-tournament-component';
 
-const NoActiveTournaments = () => (
+type NoActiveTournamentsProps = {
+    isParticipant?: boolean;
+};
+
+const NoActiveTournaments = ({ isParticipant }: NoActiveTournamentsProps) => (
     <div className="flex flex-col flex-1 min-w-0 gap-4 p-8">
-        <NoTournamentComponent />
+        {isParticipant ? (
+            <ActiveTournamentComponent />
+        ) : (
+            <NoTournamentComponent />
+        )}
         <section className="flex flex-col gap-4 w-full">
             <div className="flex justify-between items-center border-b border-on-surface/70 pb-4">
                 <div className="flex flex-col justify-start">

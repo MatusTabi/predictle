@@ -1,4 +1,4 @@
-import NoActiveGroups from '@/components/tournament/no-active-tournament';
+import NoActiveTournament from '@/components/tournament/no-active-tournament';
 
 const TournamentPage = async () => {
     const hasActiveGroups = false;
@@ -8,7 +8,7 @@ const TournamentPage = async () => {
             <h1 className="text-3xl font-bold my-4">Your groups</h1>
         </div>
     ) : (
-        <NoActiveGroups />
+        <NoActiveTournament isParticipant={true} />
     );
 
     // const matches = await getAllMatches();
