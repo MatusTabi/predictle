@@ -34,10 +34,10 @@ export default function RootLayout({
             )}
             suppressHydrationWarning
         >
-            <body className="relative min-h-full flex flex-col">
+            <body className="relative min-h-screen flex flex-col">
                 <Providers>
                     <Navbar />
-                    <main className="flex-1 z-10 inset-0 h-full w-full bg-[linear-gradient(to_right,#73737320_1px,transparent_1px),linear-gradient(to_bottom,#73737320_1px,transparent_1px)] bg-size-[20px_20px]">
+                    <main className="flex flex-col flex-1 min-h-0 z-10 inset-0 h-full w-full bg-[linear-gradient(to_right,#73737320_1px,transparent_1px),linear-gradient(to_bottom,#73737320_1px,transparent_1px)] bg-size-[20px_20px]">
                         {children}
                     </main>
                 </Providers>
