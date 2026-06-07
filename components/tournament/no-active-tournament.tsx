@@ -3,15 +3,21 @@ import { Button } from '../ui/button';
 import TournamentCard from './tournament-card';
 import NoTournamentComponent from './no-tournament-component';
 import ActiveTournamentComponent from './active-tournament-component';
+import { Tournament } from '@/backend/tournament/types';
+import CreateTournamentCard from './create-tournament-card';
 
 type NoActiveTournamentsProps = {
+    tournaments: Tournament[];
     isParticipant?: boolean;
 };
 
-const NoActiveTournaments = ({ isParticipant }: NoActiveTournamentsProps) => (
+const NoActiveTournaments = ({
+    tournaments,
+    isParticipant,
+}: NoActiveTournamentsProps) => (
     <div className="flex flex-col flex-1 min-w-0 gap-4 p-8">
         {isParticipant ? (
-            <ActiveTournamentComponent />
+            <ActiveTournamentComponent tournaments={tournaments} />
         ) : (
             <NoTournamentComponent />
         )}
@@ -33,11 +39,13 @@ const NoActiveTournaments = ({ isParticipant }: NoActiveTournamentsProps) => (
         </section>
         <section className="w-full overflow-x-auto max-w-full">
             <div className="flex gap-8 w-max min-w-max">
-                <TournamentCard isLive={false} />
-                <TournamentCard isLive={true} />
-                <TournamentCard isLive={false} />
-                <TournamentCard isLive={true} />
-                <TournamentCard isLive={true} />
+                {tournaments.length === 0 ? (
+                    <CreateTournamentCard />
+                ) : (
+                    tournaments.map((tournament, index) => (
+                        <TournamentCard key={index} tournament={tournament} />
+                    ))
+                )}
             </div>
         </section>
     </div>

@@ -1,14 +1,30 @@
+import { Tournament } from '@/backend/tournament/types';
 import NoActiveTournament from '@/components/tournament/no-active-tournament';
 
 const TournamentPage = async () => {
-    const hasActiveGroups = false;
+    const tournaments: Tournament[] = [
+        {
+            title: 'FIFA World Cup 2026',
+            category: 'Football',
+            isLive: true,
+            players: 4,
+        },
+        {
+            title: 'NBA Playoffs 2024',
+            category: 'Basketball',
+            isLive: false,
+            players: 8,
+        },
+        {
+            title: 'Wimbledon 2024',
+            category: 'Tennis',
+            isLive: true,
+            players: 16,
+        },
+    ];
 
-    return hasActiveGroups ? (
-        <div className="flex flex-col flex-1 gap-4">
-            <h1 className="text-3xl font-bold my-4">Your groups</h1>
-        </div>
-    ) : (
-        <NoActiveTournament isParticipant={true} />
+    return (
+        <NoActiveTournament isParticipant={true} tournaments={tournaments} />
     );
 
     // const matches = await getAllMatches();
