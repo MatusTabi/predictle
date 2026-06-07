@@ -6,7 +6,7 @@ const NoTournamentComponent = () => (
             <Trophy className="w-32 h-32 animate-pulse" />
         </div>
         <h1 className="text-5xl font-bold mt-8 text-on-surface text-center">
-            You don't have any active tournaments yet
+            You don&apos;t have any active tournaments yet
         </h1>
         <p className="py-4">
             Join or create a group to start predicting tournament matches and
