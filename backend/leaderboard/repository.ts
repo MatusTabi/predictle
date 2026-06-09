@@ -1,10 +1,10 @@
-import { db, tournamentParticipant } from '@/db';
+import { db, tournamentParticipant, users } from '@/db';
 import { desc, eq, sql } from 'drizzle-orm';
+import type { TournamentTableRow } from './types';
 
 export const ensureTournamentParticipation = async (
     userId: string,
-    userName: string,
-    tournamentId?: number,
+    tournamentId: string,
 ) => {
     const numberOfParticipants = (await getTournamentParticipants()).length;
 
@@ -12,24 +12,39 @@ export const ensureTournamentParticipation = async (
         .insert(tournamentParticipant)
         .values({
             userId: userId,
-            userName: userName,
-            // tournamentId,
-            rank: numberOfParticipants + 1,
+            tournamentId: tournamentId,
         })
         .onConflictDoNothing();
 };
 
-export const getTournamentParticipants = async (tournamentId?: number) => {
-    return await db
-        .select()
+export const getTournamentParticipants = async (
+    tournamentId?: string,
+): Promise<TournamentTableRow[]> => {
+    const results = await db
+        .select({
+            id: tournamentParticipant.id,
+            userId: tournamentParticipant.userId,
+            correctWinners: tournamentParticipant.correctWinners,
+            correctScores: tournamentParticipant.correctScores,
+            totalPredictions: tournamentParticipant.totalPredictions,
+            points: tournamentParticipant.points,
+            userName: users.name,
+        })
         .from(tournamentParticipant)
-        // .where(eq(tournamentParticipant.tournamentId, tournamentId))
+        .innerJoin(users, eq(tournamentParticipant.userId, users.id))
         .orderBy(desc(tournamentParticipant.points));
+    // .where(eq(tournamentParticipant.tournamentId, tournamentId))
+
+    return results.map((row, index) => ({
+        ...row,
+        rank: index + 1,
+        userName: row.userName || 'Unknown',
+    }));
 };
 
 export const incrementParticipantTotalPredictions = async (
     userId: string,
-    tournamentId?: number,
+    tournamentId?: string,
 ) => {
     await db
         .update(tournamentParticipant)
