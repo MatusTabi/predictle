@@ -3,25 +3,24 @@ import {
     getTournamentParticipants as getParticipants,
     incrementParticipantTotalPredictions as incrementTotalPredictions,
 } from './repository';
-import { TournamentParticipantDTO } from './types';
+import { TournamentParticipantDTO, TournamentTableRow } from './types';
 
 export const ensureTournamentParticipation = async (
     userId: string,
-    userName: string,
-    tournamentId: number,
+    tournamentId: string,
 ) => {
-    return await ensureParticipation(userId, userName, tournamentId);
+    return await ensureParticipation(userId, tournamentId);
 };
 
 export const getTournamentParticipants = async (
-    tournamentId: number,
-): Promise<TournamentParticipantDTO[]> => {
+    tournamentId?: string,
+): Promise<TournamentTableRow[]> => {
     return await getParticipants(tournamentId);
 };
 
 export const incrementParticipantTotalPredictions = async (
     userId: string,
-    tournamentId: number,
+    tournamentId: string,
 ): Promise<void> => {
     return await incrementTotalPredictions(userId, tournamentId);
 };
