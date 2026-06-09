@@ -6,8 +6,6 @@ export const ensureTournamentParticipation = async (
     userId: string,
     tournamentId: string,
 ) => {
-    const numberOfParticipants = (await getTournamentParticipants()).length;
-
     return await db
         .insert(tournamentParticipant)
         .values({
