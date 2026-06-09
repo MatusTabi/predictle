@@ -10,9 +10,12 @@ import { Trophy } from 'lucide-react';
 import { sampleUsers, User } from './types';
 import { useReducer, useState } from 'react';
 import { cn } from '@/lib/utils';
-import { TournamentParticipantDTO } from '@/backend/leaderboard/types';
+import {
+    TournamentParticipantDTO,
+    TournamentTableRow,
+} from '@/backend/leaderboard/types';
 
-const columnHelper = createColumnHelper<TournamentParticipantDTO>();
+const columnHelper = createColumnHelper<TournamentTableRow>();
 
 const trophyColors: Record<number, string> = {
     1: 'text-yellow-500',
@@ -65,11 +68,11 @@ const columns = [
 ];
 
 type LeaderboardContentProps = {
-    participants: TournamentParticipantDTO[];
+    participants: TournamentTableRow[];
 };
 
 const LeaderboardTable = ({ participants }: LeaderboardContentProps) => {
-    const [data, setData] = useState<TournamentParticipantDTO[]>(() => [
+    const [data, setData] = useState<TournamentTableRow[]>(() => [
         ...participants,
     ]);
     const rerender = useReducer(() => ({}), {})[1];
