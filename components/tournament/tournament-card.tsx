@@ -20,7 +20,7 @@ const TournamentCard = ({ tournament }: TournamentCardProps) => {
                     </span>
                 ) : (
                     <span className="self-start bg-primary-container text-on-primary-container px-4 py-2 rounded-full border border-inverse-on-surface text-sm font-medium">
-                        In 6 days
+                        Upcoming
                     </span>
                 )}
             </div>
