@@ -18,6 +18,7 @@ export {
     verificationToken,
     predictions,
     tournamentParticipant,
+    tournament,
 } from './schema';
 
 export type {
@@ -25,4 +26,5 @@ export type {
     DbUser,
     Prediction,
     TournamentParticipant,
+    Tournament,
 } from './schema';
