@@ -4,7 +4,7 @@ import { useState } from 'react';
 import LeaderboardTable from '../table/leaderboard/leaderboard';
 import { Button } from '../ui/button';
 import { cn } from '@/lib/utils';
-import { TournamentParticipantDTO } from '@/backend/leaderboard/types';
+import { TournamentTableRow } from '@/backend/leaderboard/types';
 
 const tabs = [
     { id: 'tournament', label: 'Tournament' },
@@ -12,7 +12,7 @@ const tabs = [
 ];
 
 type LeaderboardContentProps = {
-    participants: TournamentParticipantDTO[];
+    participants: TournamentTableRow[];
 };
 
 const LeaderboardContent = ({ participants }: LeaderboardContentProps) => {

@@ -8,3 +8,8 @@ export type TournamentParticipantDTO = {
     totalPredictions: number | null;
     points: number | null;
 };
+
+export type TournamentTableRow = TournamentParticipantDTO & {
+    rank: number;
+    userName: string;
+};

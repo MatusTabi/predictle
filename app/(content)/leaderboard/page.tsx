@@ -1,4 +1,4 @@
-import { getTournamentParticipants } from '@/backend/leaderboard/repository';
+import { getTournamentParticipants } from '@/backend/leaderboard/service';
 import LeaderboardContent from '@/components/leaderboard/content';
 
 const LeaderboardPage = async () => {
