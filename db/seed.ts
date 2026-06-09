@@ -14,9 +14,11 @@ const main = async () => {
 
     await db.delete(schema.users);
     await db.delete(schema.tournament);
+    await db.delete(schema.tournamentParticipant);
 
     await seedUsers(db);
     await seedTournaments(db);
+    await seedTournamentParticipants(db);
     console.log('Database seeded successfully!');
 };
 
@@ -39,6 +41,25 @@ const seedTournaments = async (db: ReturnType<typeof drizzle>) => {
             category: faker.word.noun(),
             startDate: faker.date.future().toISOString(),
         });
+    }
+};
+
+const seedTournamentParticipants = async (db: ReturnType<typeof drizzle>) => {
+    const users = await db.select().from(schema.users);
+    const tournaments = await db.select().from(schema.tournament);
+
+    for (const tournament of tournaments) {
+        for (const user of users) {
+            await db.insert(schema.tournamentParticipant).values({
+                id: faker.string.uuid(),
+                userId: user.id,
+                tournamentId: tournament.id,
+                correctWinners: faker.number.int({ min: 0, max: 10 }),
+                correctScores: faker.number.int({ min: 0, max: 10 }),
+                totalPredictions: faker.number.int({ min: 0, max: 20 }),
+                points: faker.number.int({ min: 0, max: 100 }),
+            });
+        }
     }
 };
 
