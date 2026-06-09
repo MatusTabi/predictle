@@ -1,30 +1,24 @@
-import { Tournament } from '@/backend/tournament/types';
+import { auth } from '@/auth/auth';
+import {
+    getActiveTournaments,
+    getAvailableTournaments,
+} from '@/backend/tournament/service';
 import NoActiveTournament from '@/components/tournament/no-active-tournament';
 
 const TournamentPage = async () => {
-    const tournaments: Tournament[] = [
-        {
-            title: 'FIFA World Cup 2026',
-            category: 'Football',
-            isLive: true,
-            players: 4,
-        },
-        {
-            title: 'NBA Playoffs 2024',
-            category: 'Basketball',
-            isLive: false,
-            players: 8,
-        },
-        {
-            title: 'Wimbledon 2024',
-            category: 'Tennis',
-            isLive: true,
-            players: 16,
-        },
-    ];
+    const session = await auth();
+    const activeTournaments = await getActiveTournaments(
+        session?.user?.id ?? '',
+    );
+    const availableTournaments = await getAvailableTournaments(
+        session?.user?.id ?? '',
+    );
 
     return (
-        <NoActiveTournament isParticipant={true} tournaments={tournaments} />
+        <NoActiveTournament
+            activeTournaments={activeTournaments}
+            availableTournaments={availableTournaments}
+        />
     );
 
     // const matches = await getAllMatches();

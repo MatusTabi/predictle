@@ -1,9 +1,9 @@
 import { Users } from 'lucide-react';
 import { Button } from '../ui/button';
-import { Tournament } from '@/backend/tournament/types';
+import { TournamentDTO } from '@/backend/tournament/types';
 
 type TournamentCardProps = {
-    tournament: Tournament;
+    tournament: TournamentDTO;
 };
 
 const TournamentCard = ({ tournament }: TournamentCardProps) => {

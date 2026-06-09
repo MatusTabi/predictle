@@ -3,21 +3,21 @@ import { Button } from '../ui/button';
 import TournamentCard from './tournament-card';
 import NoTournamentComponent from './no-tournament-component';
 import ActiveTournamentComponent from './active-tournament-component';
-import { Tournament } from '@/backend/tournament/types';
 import CreateTournamentCard from './create-tournament-card';
+import { TournamentDTO } from '@/backend/tournament/types';
 
 type NoActiveTournamentsProps = {
-    tournaments: Tournament[];
-    isParticipant?: boolean;
+    activeTournaments: TournamentDTO[];
+    availableTournaments: TournamentDTO[];
 };
 
 const NoActiveTournaments = ({
-    tournaments,
-    isParticipant,
+    activeTournaments,
+    availableTournaments,
 }: NoActiveTournamentsProps) => (
     <div className="flex flex-col flex-1 min-w-0 gap-4 p-8">
-        {isParticipant ? (
-            <ActiveTournamentComponent tournaments={tournaments} />
+        {activeTournaments.length > 0 ? (
+            <ActiveTournamentComponent tournaments={activeTournaments} />
         ) : (
             <NoTournamentComponent />
         )}
@@ -39,10 +39,10 @@ const NoActiveTournaments = ({
         </section>
         <section className="w-full overflow-x-auto max-w-full">
             <div className="flex gap-8 w-max min-w-max">
-                {tournaments.length === 0 ? (
+                {availableTournaments.length === 0 ? (
                     <CreateTournamentCard />
                 ) : (
-                    tournaments.map((tournament, index) => (
+                    availableTournaments.map((tournament, index) => (
                         <TournamentCard key={index} tournament={tournament} />
                     ))
                 )}
