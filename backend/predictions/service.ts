@@ -1,7 +1,5 @@
-import {
-    ensureTournamentParticipation,
-    incrementParticipantTotalPredictions,
-} from '../leaderboard/repository';
+import { incrementParticipantTotalPredictions } from '../leaderboard/repository';
+import { ensureTournamentParticipation } from '../tournament/service';
 import { getUsernameById } from '../user/repository';
 import { createPrediction } from './repository';
 import { PredictionRequestDTO } from './types';
