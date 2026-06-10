@@ -1,9 +1,14 @@
 export type TournamentDTO = {
     id: string;
+    slug: string;
     title: string;
     category: string;
     isLive: boolean;
     players: number;
+};
+
+export type TournamentDetailDTO = TournamentDTO & {
+    startDate: string;
 };
 
 export type TournamentsResponse = {
@@ -24,6 +29,7 @@ export type ActiveTournament = {
     tournament: {
         id: string;
         name: string;
+        slug: string;
         category: string;
         startDate: string;
     };

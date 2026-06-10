@@ -1,8 +1,10 @@
 'use server';
 
 import { auth } from '@/auth/auth';
+import { redirect } from 'next/navigation';
 
 import {
+    createTournament,
     getActiveTournaments,
     getAvailableTournaments,
     joinTournament,
@@ -38,4 +40,20 @@ export const joinTournamentAction = async (tournamentId: string) => {
     await joinTournament(session.user.id, tournamentId);
 
     return { success: true };
+};
+
+export const createTournamentAction = async (formData: FormData) => {
+    const session = await auth();
+
+    if (!session?.user?.id) {
+        throw new Error('Unauthorized');
+    }
+
+    const tournament = await createTournament({
+        name: String(formData.get('name') ?? ''),
+        category: String(formData.get('category') ?? ''),
+        startDate: String(formData.get('startDate') ?? ''),
+    });
+
+    redirect(`/tournament/${tournament.slug}`);
 };

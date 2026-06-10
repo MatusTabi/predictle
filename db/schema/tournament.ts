@@ -6,6 +6,7 @@ export const tournament = sqliteTable('tournament', {
         .$defaultFn(() => crypto.randomUUID()),
 
     name: text('name').notNull(),
+    slug: text('slug').notNull().unique(),
     category: text('category').notNull(),
     startDate: text('start_date').notNull(),
 });

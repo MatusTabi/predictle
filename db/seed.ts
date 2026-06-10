@@ -35,9 +35,12 @@ const seedUsers = async (db: ReturnType<typeof drizzle>) => {
 
 const seedTournaments = async (db: ReturnType<typeof drizzle>) => {
     for (let i = 0; i < 3; i++) {
+        const name = `Tournament ${i + 1}`;
+
         await db.insert(schema.tournament).values({
             id: faker.string.uuid(),
-            name: `Tournament ${i + 1}`,
+            name,
+            slug: name.toLowerCase().replaceAll(' ', '-'),
             category: faker.word.noun(),
             startDate: faker.date.future().toISOString(),
         });

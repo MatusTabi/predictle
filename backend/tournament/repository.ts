@@ -35,6 +35,36 @@ export const getAvailableTournaments = async (
         .where(not(inArray(tournament.id, userTournaments)));
 };
 
+export const getTournamentBySlug = async (
+    slug: string,
+): Promise<Tournament | undefined> => {
+    const [result] = await db
+        .select()
+        .from(tournament)
+        .where(eq(tournament.slug, slug))
+        .limit(1);
+
+    return result;
+};
+
+export type CreateTournamentInput = {
+    name: string;
+    slug: string;
+    category: string;
+    startDate: string;
+};
+
+export const createTournament = async (
+    input: CreateTournamentInput,
+): Promise<Tournament> => {
+    const [createdTournament] = await db
+        .insert(tournament)
+        .values(input)
+        .returning();
+
+    return createdTournament;
+};
+
 export const ensureTournamentParticipation = async (
     userId: string,
     tournamentId: string,
@@ -51,7 +81,7 @@ export const ensureTournamentParticipation = async (
 export const getTournamentParticipants = async (
     tournamentId?: string,
 ): Promise<TournamentTableRow[]> => {
-    const results = await db
+    const query = db
         .select({
             id: tournamentParticipant.id,
             userId: tournamentParticipant.userId,
@@ -62,9 +92,13 @@ export const getTournamentParticipants = async (
             userName: users.name,
         })
         .from(tournamentParticipant)
-        .innerJoin(users, eq(tournamentParticipant.userId, users.id))
-        .orderBy(desc(tournamentParticipant.points));
-    // .where(eq(tournamentParticipant.tournamentId, tournamentId))
+        .innerJoin(users, eq(tournamentParticipant.userId, users.id));
+
+    const results = tournamentId
+        ? await query
+              .where(eq(tournamentParticipant.tournamentId, tournamentId))
+              .orderBy(desc(tournamentParticipant.points))
+        : await query.orderBy(desc(tournamentParticipant.points));
 
     return results.map((row, index) => ({
         ...row,

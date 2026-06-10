@@ -1,6 +1,7 @@
 'use client';
 
 import { Plus } from 'lucide-react';
+import Link from 'next/link';
 import { Button } from '../ui/button';
 import TournamentCard from './tournament-card';
 import NoTournamentComponent from './no-tournament-component';
@@ -42,9 +43,14 @@ const NoActiveTournaments = ({
                             Join an existing tournament or create your own
                         </h2>
                     </div>
-                    <Button className="h-12 px-4 font-semibold text-on-primary">
-                        <Plus className="w-5 h-5" />
-                        Create tournament
+                    <Button
+                        asChild
+                        className="h-12 px-4 font-semibold text-on-primary"
+                    >
+                        <Link href="/tournament/create">
+                            <Plus className="w-5 h-5" />
+                            Create tournament
+                        </Link>
                     </Button>
                 </div>
             </section>

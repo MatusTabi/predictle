@@ -1,5 +1,6 @@
 import { TournamentDTO } from '@/backend/tournament/types';
 import { Users } from 'lucide-react';
+import Link from 'next/link';
 import { Button } from '../ui/button';
 
 type ActiveTournamentComponentProps = {
@@ -51,8 +52,13 @@ const ActiveTournamentComponent = ({
                                     : 'players'}
                             </span>
                         </div>
-                        <Button className="mt-2 w-1/2 h-12 p-2 font-semibold text-on-primary">
-                            Visit tournament
+                        <Button
+                            asChild
+                            className="mt-2 w-1/2 h-12 p-2 font-semibold text-on-primary"
+                        >
+                            <Link href={`/tournament/${tournament.slug}`}>
+                                Visit tournament
+                            </Link>
                         </Button>
                     </div>
                 ))}
