@@ -1,9 +1,9 @@
-import { Tournament } from '@/backend/tournament/types';
+import { TournamentDTO } from '@/backend/tournament/types';
 import { Users } from 'lucide-react';
 import { Button } from '../ui/button';
 
 type ActiveTournamentComponentProps = {
-    tournaments: Tournament[];
+    tournaments: TournamentDTO[];
 };
 
 const ActiveTournamentComponent = ({
@@ -19,9 +19,9 @@ const ActiveTournamentComponent = ({
         </section>
         <section className="w-full overflow-x-auto max-w-full">
             <div className="flex gap-8 w-max min-w-max">
-                {tournaments.map((tournament, index) => (
+                {tournaments.map((tournament) => (
                     <div
-                        key={index}
+                        key={tournament.id}
                         className="border rounded-lg border-inverse-on-surface p-8 flex flex-col justify-center gap-2 w-120 h-64 shrink-0"
                     >
                         <div className="flex gap-2">

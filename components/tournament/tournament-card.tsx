@@ -1,12 +1,17 @@
+'use client';
+
 import { Users } from 'lucide-react';
 import { Button } from '../ui/button';
 import { TournamentDTO } from '@/backend/tournament/types';
+import { useJoinTournamentMutation } from '@/backend/tournament/mutation';
 
 type TournamentCardProps = {
     tournament: TournamentDTO;
 };
 
 const TournamentCard = ({ tournament }: TournamentCardProps) => {
+    const joinTournamentMutation = useJoinTournamentMutation();
+
     return (
         <div className="border rounded-lg border-inverse-on-surface p-8 flex flex-col justify-center gap-2 w-80 h-64 shrink-0">
             <div className="flex gap-2">
@@ -32,8 +37,14 @@ const TournamentCard = ({ tournament }: TournamentCardProps) => {
                     {tournament.players === 1 ? 'player' : 'players'}
                 </span>
             </div>
-            <Button className="mt-2 w-3/4 h-12 p-2 font-semibold text-on-primary">
-                Join tournament
+            <Button
+                className="mt-2 w-3/4 h-12 p-2 font-semibold text-on-primary"
+                disabled={joinTournamentMutation.isPending}
+                onClick={() => joinTournamentMutation.mutate(tournament.id)}
+            >
+                {joinTournamentMutation.isPending
+                    ? 'Joining...'
+                    : 'Join tournament'}
             </Button>
         </div>
     );

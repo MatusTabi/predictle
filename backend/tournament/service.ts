@@ -26,15 +26,12 @@ export const getAvailableTournaments = async (
     return dbTournamentToDtoList(tournaments);
 };
 
-export const ensureTournamentParticipation = async (
-    userId: string,
-    tournamentId: string,
-) => {
-    return await ensureParticipation(userId, tournamentId);
-};
-
 export const getTournamentParticipants = async (
     tournamentId?: string,
 ): Promise<TournamentTableRow[]> => {
     return await getParticipants(tournamentId);
+};
+
+export const joinTournament = async (userId: string, tournamentId: string) => {
+    await ensureParticipation(userId, tournamentId);
 };

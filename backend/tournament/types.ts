@@ -6,6 +6,11 @@ export type TournamentDTO = {
     players: number;
 };
 
+export type TournamentsResponse = {
+    activeTournaments: TournamentDTO[];
+    availableTournaments: TournamentDTO[];
+};
+
 export type ActiveTournament = {
     tournament_participant: {
         id: string;
