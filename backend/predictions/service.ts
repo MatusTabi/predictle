@@ -10,6 +10,12 @@ export const submitPrediction = async (prediction: PredictionRequestDTO) => {
         throw new Error('Match not found');
     }
 
+    const matchStartDate = new Date(`${match.date}T${match.time}`);
+
+    if (matchStartDate <= new Date()) {
+        throw new Error('Match has already started');
+    }
+
     const createdPrediction = await createPrediction(prediction);
 
     await incrementParticipantTotalPredictions(
