@@ -1,6 +1,8 @@
 import { scoreFinishedTournamentMatches } from '@/backend/scoring/service';
 import { NextResponse } from 'next/server';
 
+export const dynamic = 'force-dynamic';
+
 export async function GET(request: Request) {
     const cronSecret = process.env.CRON_SECRET;
 
