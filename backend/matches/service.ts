@@ -151,7 +151,7 @@ const toLocalDateAndTime = (date: Date) => {
 export const getRecentUnendedTournamentMatches = async (
     tournamentId: string,
 ) => {
-    const cutoff = new Date(Date.now() + 4 * 60 * 60 * 1000);
+    const cutoff = new Date(Date.now() - 4 * 60 * 60 * 1000);
     const { date, time } = toLocalDateAndTime(cutoff);
 
     return dbMatchToDtoList(
