@@ -32,13 +32,15 @@ const TournamentDetailPage = async ({ params }: TournamentDetailPageProps) => {
             <section className="border border-inverse-on-surface rounded-lg p-8 bg-primary-container relative">
                 <Button
                     asChild
-                    className="absolute right-4 top-4 h-12 px-4 font-semibold text-on-primary"
+                    className="absolute right-4 top-4 h-12 w-12 px-0 font-semibold text-on-primary sm:w-auto sm:px-4"
                 >
                     <Link
-                        href={`/tournament/${tournament.slug}/matches/create`}
+                        href={`/tournament/${tournament.slug}/matches/edit`}
+                        aria-label="Edit matches"
+                        title="Edit matches"
                     >
                         <Pencil className="w-5 h-5" />
-                        Add matches
+                        <span className="hidden sm:inline">Edit matches</span>
                     </Link>
                 </Button>
                 <div className="flex flex-wrap gap-2">

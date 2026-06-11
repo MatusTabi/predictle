@@ -25,7 +25,7 @@ const NoActiveTournaments = ({
     });
 
     return (
-        <div className="flex flex-col flex-1 min-w-0 gap-4 p-8">
+        <div className="flex flex-col flex-1 min-w-0 gap-4 p-4 sm:p-6 lg:p-8">
             {data.activeTournaments.length > 0 ? (
                 <ActiveTournamentComponent
                     tournaments={data.activeTournaments}
@@ -33,29 +33,31 @@ const NoActiveTournaments = ({
             ) : (
                 <NoTournamentComponent />
             )}
-            <section className="flex flex-col gap-4 w-full">
-                <div className="flex justify-between items-center border-b border-on-surface/70 pb-4">
-                    <div className="flex flex-col justify-start">
-                        <h1 className="text-2xl font-bold text-on-surface">
+            <section className="flex w-full flex-col gap-4">
+                <div className="flex items-center justify-between gap-4 border-b border-on-surface/70 pb-4">
+                    <div className="flex min-w-0 flex-col justify-start">
+                        <h1 className="text-2xl font-bold text-on-surface sm:text-3xl">
                             Available Tournaments
                         </h1>
-                        <h2 className="text-lg text-on-surface/70">
+                        <h2 className="text-base text-on-surface/70 sm:text-lg">
                             Join an existing tournament or create your own
                         </h2>
                     </div>
                     <Button
                         asChild
-                        className="h-12 px-4 font-semibold text-on-primary"
+                        className="h-12 w-12 shrink-0 px-0 font-semibold text-on-primary sm:w-auto sm:px-4"
                     >
                         <Link href="/tournament/create">
                             <Plus className="w-5 h-5" />
-                            Create tournament
+                            <span className="hidden sm:inline">
+                                Create tournament
+                            </span>
                         </Link>
                     </Button>
                 </div>
             </section>
-            <section className="w-full overflow-x-auto max-w-full">
-                <div className="flex gap-8 w-max min-w-max">
+            <section className="w-full max-w-full overflow-x-hidden md:overflow-x-auto">
+                <div className="flex w-full flex-col gap-4 md:w-max md:min-w-max md:flex-row md:gap-8">
                     {data.availableTournaments.length === 0 ? (
                         <CreateTournamentCard />
                     ) : (

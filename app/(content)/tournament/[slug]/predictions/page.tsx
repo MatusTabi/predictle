@@ -1,5 +1,7 @@
 import { getTournamentMatchesByDate } from '@/backend/matches/service';
 import { getTournamentBySlug } from '@/backend/tournament/service';
+import GlobalLeaders from '@/components/card/global-leaders';
+import MyPredictions from '@/components/card/my-predictions';
 import TournamentPredictionsContent from '@/components/tournament/tournament-predictions-content';
 import { notFound } from 'next/navigation';
 
@@ -44,11 +46,19 @@ const TournamentPredictionsPage = async ({
                     Choose a date and submit predictions for tournament matches.
                 </p>
             </section>
-            <TournamentPredictionsContent
-                tournamentSlug={tournament.slug}
-                selectedDate={selectedDate}
-                matches={matches}
-            />
+            <div className="flex flex-col gap-4 lg:flex-row">
+                <div className="w-full lg:w-3/5">
+                    <TournamentPredictionsContent
+                        tournamentSlug={tournament.slug}
+                        selectedDate={selectedDate}
+                        matches={matches}
+                    />
+                </div>
+                <div className="flex w-full flex-col gap-2 lg:w-2/5">
+                    <MyPredictions />
+                    <GlobalLeaders />
+                </div>
+            </div>
         </main>
     );
 };

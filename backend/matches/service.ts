@@ -10,6 +10,8 @@ import {
     getById,
     getByIdWithUserPrediction,
     createTournamentMatch,
+    getUnendedByTournamentBefore,
+    setTournamentMatchScore,
 } from './repository';
 import { dbMatchToDtoList, dbMatchWithPredictionToDtoList } from './mapper';
 
@@ -133,4 +135,66 @@ export const addTournamentMatch = async ({
         date: startDate.toISOString().slice(0, 10),
         time: startDate.toTimeString().slice(0, 8),
     });
+};
+
+const toLocalDateAndTime = (date: Date) => {
+    const localDate = new Date(
+        date.getTime() - date.getTimezoneOffset() * 60_000,
+    );
+
+    return {
+        date: localDate.toISOString().slice(0, 10),
+        time: localDate.toISOString().slice(11, 19),
+    };
+};
+
+export const getRecentUnendedTournamentMatches = async (
+    tournamentId: string,
+) => {
+    const cutoff = new Date(Date.now() + 4 * 60 * 60 * 1000);
+    const { date, time } = toLocalDateAndTime(cutoff);
+
+    return dbMatchToDtoList(
+        await getUnendedByTournamentBefore(tournamentId, date, time),
+    );
+};
+
+export type EndTournamentMatchPayload = {
+    tournamentId: string;
+    matchId: string;
+    homeScore: number;
+    awayScore: number;
+};
+
+export const endTournamentMatch = async ({
+    tournamentId,
+    matchId,
+    homeScore,
+    awayScore,
+}: EndTournamentMatchPayload) => {
+    if (!matchId) {
+        throw new Error('Match is required');
+    }
+
+    if (
+        !Number.isInteger(homeScore) ||
+        !Number.isInteger(awayScore) ||
+        homeScore < 0 ||
+        awayScore < 0
+    ) {
+        throw new Error('Scores must be non-negative whole numbers');
+    }
+
+    const match = await setTournamentMatchScore({
+        tournamentId,
+        matchId,
+        homeScore,
+        awayScore,
+    });
+
+    if (!match) {
+        throw new Error('Match not found');
+    }
+
+    return match;
 };

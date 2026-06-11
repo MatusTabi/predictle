@@ -1,7 +1,7 @@
 import { db, Match, matches, predictions, Prediction } from '@/db';
 import { MatchSchema } from './schema';
 import z from 'zod';
-import { and, eq, sql } from 'drizzle-orm';
+import { and, desc, eq, isNull, lt, lte, or, sql } from 'drizzle-orm';
 
 export const create = async (match: MatchSchema | MatchSchema[]) => {
     const parsedMatch = z.array(MatchSchema).or(MatchSchema).parse(match);
@@ -150,4 +150,47 @@ export const getByIdWithUserPrediction = async (
         .limit(1);
 
     return rows[0] ?? null;
+};
+
+export const getUnendedByTournamentBefore = async (
+    tournamentId: string,
+    date: string,
+    time: string,
+): Promise<Match[]> => {
+    return await db
+        .select()
+        .from(matches)
+        .where(
+            and(
+                eq(matches.tournamentId, tournamentId),
+                or(
+                    lt(matches.date, date),
+                    and(eq(matches.date, date), lte(matches.time, time)),
+                ),
+                or(isNull(matches.homeScore), isNull(matches.awayScore)),
+            ),
+        )
+        .orderBy(desc(matches.date), desc(matches.time));
+};
+
+export const setTournamentMatchScore = async ({
+    tournamentId,
+    matchId,
+    homeScore,
+    awayScore,
+}: {
+    tournamentId: string;
+    matchId: string;
+    homeScore: number;
+    awayScore: number;
+}): Promise<Match | null> => {
+    const [match] = await db
+        .update(matches)
+        .set({ homeScore, awayScore })
+        .where(
+            and(eq(matches.id, matchId), eq(matches.tournamentId, tournamentId)),
+        )
+        .returning();
+
+    return match ?? null;
 };
