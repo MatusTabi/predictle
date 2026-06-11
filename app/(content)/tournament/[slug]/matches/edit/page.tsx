@@ -84,8 +84,8 @@ const CreateTournamentMatchPage = async ({
                         Manage recent matches
                     </h2>
                     <p className="mb-6 text-on-surface/70">
-                        Set final scores for matches scheduled before the next 4
-                        hours. Submitting a score marks the match as ended.
+                        Set final scores for matches that started at least 4
+                        hours ago. Submitting a score marks the match as ended.
                     </p>
 
                     {recentMatches.length === 0 ? (
