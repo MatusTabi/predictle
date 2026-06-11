@@ -3,6 +3,7 @@ import { ActiveTournament, TournamentDetailDTO, TournamentDTO } from './types';
 
 export const dbTournamentToActiveTournamentDtoList = (
     tournament: ActiveTournament[],
+    playerCounts: Record<string, number> = {},
 ): TournamentDTO[] => {
     return tournament.map((t) => {
         const isLive = new Date(t.tournament.startDate) <= new Date();
@@ -12,13 +13,14 @@ export const dbTournamentToActiveTournamentDtoList = (
             title: t.tournament.name,
             category: t.tournament.category,
             isLive,
-            players: 0, // This should be replaced with the actual number of players in the tournament
+            players: playerCounts[t.tournament.id] ?? 0,
         };
     });
 };
 
 export const dbTournamentToDtoList = (
     tournaments: Tournament[],
+    playerCounts: Record<string, number> = {},
 ): TournamentDTO[] => {
     return tournaments.map((t) => {
         const isLive = new Date(t.startDate) <= new Date();
@@ -28,13 +30,14 @@ export const dbTournamentToDtoList = (
             title: t.name,
             category: t.category,
             isLive,
-            players: 0, // This should be replaced with the actual number of players in the tournament
+            players: playerCounts[t.id] ?? 0,
         };
     });
 };
 
 export const dbTournamentToDetailDto = (
     tournament: Tournament,
+    players = 0,
 ): TournamentDetailDTO => {
     const isLive = new Date(tournament.startDate) <= new Date();
 
@@ -44,7 +47,7 @@ export const dbTournamentToDetailDto = (
         title: tournament.name,
         category: tournament.category,
         isLive,
-        players: 0,
+        players,
         startDate: tournament.startDate,
     };
 };

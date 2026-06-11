@@ -1,5 +1,5 @@
 import { db, Tournament, tournament, tournamentParticipant, users } from '@/db';
-import { eq, inArray, not, desc } from 'drizzle-orm';
+import { count, desc, eq, inArray, not } from 'drizzle-orm';
 import { ActiveTournament } from './types';
 import { TournamentTableRow } from '../leaderboard/types';
 
@@ -45,6 +45,27 @@ export const getTournamentBySlug = async (
         .limit(1);
 
     return result;
+};
+
+export const getTournamentParticipantCounts = async (
+    tournamentIds: string[],
+): Promise<Record<string, number>> => {
+    if (tournamentIds.length === 0) {
+        return {};
+    }
+
+    const rows = await db
+        .select({
+            tournamentId: tournamentParticipant.tournamentId,
+            players: count(tournamentParticipant.id),
+        })
+        .from(tournamentParticipant)
+        .where(inArray(tournamentParticipant.tournamentId, tournamentIds))
+        .groupBy(tournamentParticipant.tournamentId);
+
+    return Object.fromEntries(
+        rows.map((row) => [row.tournamentId, row.players]),
+    );
 };
 
 export type CreateTournamentInput = {
