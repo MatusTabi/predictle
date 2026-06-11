@@ -5,6 +5,7 @@ import {
     getTournamentParticipants as getParticipants,
     getTournamentBySlug as tournamentBySlug,
     createTournament as createTournamentRecord,
+    getTournamentParticipantCounts,
 } from './repository';
 import { TournamentDetailDTO, TournamentDTO } from './types';
 import {
@@ -18,15 +19,22 @@ export const getActiveTournaments = async (
     userId: string,
 ): Promise<TournamentDTO[]> => {
     const tournaments = await activeTournaments(userId);
+    const playerCounts = await getTournamentParticipantCounts(
+        tournaments.map((tournament) => tournament.tournament.id),
+    );
 
-    return dbTournamentToActiveTournamentDtoList(tournaments);
+    return dbTournamentToActiveTournamentDtoList(tournaments, playerCounts);
 };
 
 export const getAvailableTournaments = async (
     userId: string,
 ): Promise<TournamentDTO[]> => {
     const tournaments = await availableTournaments(userId);
-    return dbTournamentToDtoList(tournaments);
+    const playerCounts = await getTournamentParticipantCounts(
+        tournaments.map((tournament) => tournament.id),
+    );
+
+    return dbTournamentToDtoList(tournaments, playerCounts);
 };
 
 export const getTournamentParticipants = async (
@@ -48,7 +56,9 @@ export const getTournamentBySlug = async (
         return null;
     }
 
-    return dbTournamentToDetailDto(tournament);
+    const playerCounts = await getTournamentParticipantCounts([tournament.id]);
+
+    return dbTournamentToDetailDto(tournament, playerCounts[tournament.id] ?? 0);
 };
 
 export type CreateTournamentPayload = {
@@ -104,5 +114,5 @@ export const createTournament = async ({
         startDate,
     });
 
-    return dbTournamentToDetailDto(tournament);
+    return dbTournamentToDetailDto(tournament, 0);
 };
