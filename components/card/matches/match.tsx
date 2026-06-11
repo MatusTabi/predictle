@@ -19,20 +19,29 @@ type MatchCardProps = {
     match: MatchDTO;
 };
 
+const getMatchStartDate = (match: MatchDTO) => {
+    return new Date(`${match.date}T${match.startTime}`);
+};
+
+const liveWindowMs = 2 * 60 * 60 * 1000;
+
 const MatchCard = ({ match }: MatchCardProps) => {
     const [currentMatch, setCurrentMatch] = useState(match);
     const [homePrediction, setHomePrediction] = useState('');
     const [awayPrediction, setAwayPrediction] = useState('');
     const { mutate, isPending } = useSubmitPredictionMutation();
 
+    const now = new Date();
+    const matchStartDate = getMatchStartDate(currentMatch);
+    const hasStarted = now >= matchStartDate;
     const isLive =
-        new Date() >=
-        new Date(`${currentMatch.date}T${currentMatch.startTime}:00Z`);
+        hasStarted && now < new Date(matchStartDate.getTime() + liveWindowMs);
+    const shouldShowFinishedTag = currentMatch.hasEnded || (hasStarted && !isLive);
 
     const canSubmit = () => {
         if (
             currentMatch.predicted ||
-            isLive ||
+            hasStarted ||
             currentMatch.hasEnded ||
             isPending
         ) {
@@ -95,10 +104,21 @@ const MatchCard = ({ match }: MatchCardProps) => {
                             <PredictedMatchTag className="rounded-bl-none" />
                         )}
                     </>
+                ) : shouldShowFinishedTag ? (
+                    <>
+                        <FinishedTag
+                            className={
+                                currentMatch.predicted
+                                    ? 'rounded-tr-none'
+                                    : undefined
+                            }
+                        />
+                        {currentMatch.predicted && (
+                            <PredictedMatchTag className="rounded-bl-none" />
+                        )}
+                    </>
                 ) : currentMatch.predicted ? (
                     <PredictedMatchTag />
-                ) : currentMatch.hasEnded ? (
-                    <FinishedTag />
                 ) : (
                     <OpenMatchTag />
                 )}
@@ -120,7 +140,7 @@ const MatchCard = ({ match }: MatchCardProps) => {
                             awayPrediction={awayPrediction}
                             setHomePrediction={setHomePrediction}
                             setAwayPrediction={setAwayPrediction}
-                            canPredict={!currentMatch.predicted && !isLive}
+                            canPredict={!currentMatch.predicted && !hasStarted}
                         />
                     )}
                 </div>

@@ -35,8 +35,13 @@ const OpenMatchTag = () => (
     </div>
 );
 
-const FinishedTag = () => (
-    <div className="bg-secondary text-on-secondary rounded-bl-lg rounded-tr-lg px-3 py-2 text-xs font-semibold">
+const FinishedTag = ({ className }: MatchTagProps) => (
+    <div
+        className={cn(
+            'bg-secondary text-on-secondary rounded-bl-lg rounded-tr-lg px-3 py-2 text-xs font-semibold',
+            className,
+        )}
+    >
         FINISHED
     </div>
 );
