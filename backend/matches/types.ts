@@ -10,7 +10,6 @@ export type MatchDTO = {
     startTime: string;
     date: string;
 
-    isLive: boolean;
     hasEnded: boolean;
     predicted: boolean;
 

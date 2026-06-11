@@ -1,6 +1,5 @@
 'use client';
 
-import { useState } from 'react';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { Button } from '../ui/button';
 
@@ -19,6 +18,7 @@ const DateNavigator = ({ value, onChange }: DateNavigatorProps) => {
     return (
         <div className="flex items-center gap-4 mb-4">
             <Button
+                type="button"
                 onClick={() => changeDate(-1)}
                 className="bg-tertiary-container text-on-tertiary-container cursor-pointer"
             >
@@ -26,6 +26,7 @@ const DateNavigator = ({ value, onChange }: DateNavigatorProps) => {
             </Button>
             <span className="text-lg">{value.toLocaleDateString()}</span>
             <Button
+                type="button"
                 onClick={() => changeDate(1)}
                 className="bg-tertiary-container text-on-tertiary-container cursor-pointer"
             >

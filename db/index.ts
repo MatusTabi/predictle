@@ -17,6 +17,14 @@ export {
     sessions,
     verificationToken,
     predictions,
+    tournamentParticipant,
+    tournament,
 } from './schema';
 
-export type { Match, DbUser, Prediction } from './schema';
+export type {
+    Match,
+    DbUser,
+    Prediction,
+    TournamentParticipant,
+    Tournament,
+} from './schema';

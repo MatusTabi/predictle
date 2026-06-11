@@ -1,10 +1,29 @@
-import { getAllMatches } from '@/backend/matches/service';
-import TournamentContent from '@/components/tournament/content';
+import { auth } from '@/auth/auth';
+import {
+    getActiveTournaments,
+    getAvailableTournaments,
+} from '@/backend/tournament/service';
+import NoActiveTournament from '@/components/tournament/no-active-tournament';
 
 const TournamentPage = async () => {
-    const matches = await getAllMatches();
+    const session = await auth();
+    const activeTournaments = await getActiveTournaments(
+        session?.user?.id ?? '',
+    );
+    const availableTournaments = await getAvailableTournaments(
+        session?.user?.id ?? '',
+    );
 
-    return <TournamentContent matches={matches} />;
+    return (
+        <NoActiveTournament
+            activeTournaments={activeTournaments}
+            availableTournaments={availableTournaments}
+        />
+    );
+
+    // const matches = await getAllMatches();
+
+    // return <TournamentContent matches={matches} />;
 };
 
 export default TournamentPage;

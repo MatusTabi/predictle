@@ -12,6 +12,8 @@ import { cn } from '@/lib/utils';
 import { useSubmitPredictionMutation } from '@/backend/predictions/mutation';
 import { MatchDTO } from '@/backend/matches/types';
 import LoadingSpinner from '@/components/ui/spinner';
+import MatchInput from './input';
+import FinishedScore from './finished-score';
 
 type MatchCardProps = {
     match: MatchDTO;
@@ -23,10 +25,14 @@ const MatchCard = ({ match }: MatchCardProps) => {
     const [awayPrediction, setAwayPrediction] = useState('');
     const { mutate, isPending } = useSubmitPredictionMutation();
 
+    const isLive =
+        new Date() >=
+        new Date(`${currentMatch.date}T${currentMatch.startTime}:00Z`);
+
     const canSubmit = () => {
         if (
             currentMatch.predicted ||
-            currentMatch.isLive ||
+            isLive ||
             currentMatch.hasEnded ||
             isPending
         ) {
@@ -74,9 +80,9 @@ const MatchCard = ({ match }: MatchCardProps) => {
     };
 
     return (
-        <div className="bg-primary-container border-inverse-on-surface border rounded-lg p-4 flex flex-col flex-1 relative">
+        <div className="bg-primary-container border-inverse-on-surface border rounded-lg px-4 pt-12 pb-4 flex flex-col flex-1 relative">
             <div className="absolute top-0 right-0 flex items-center">
-                {currentMatch.isLive ? (
+                {isLive ? (
                     <>
                         <LiveMatchTag
                             className={
@@ -97,53 +103,29 @@ const MatchCard = ({ match }: MatchCardProps) => {
                     <OpenMatchTag />
                 )}
             </div>
-            <h1 className="font-semibold text-lg">Group A</h1>
+            {/* <h1 className="font-semibold text-lg">Group A</h1> */}
             <div className="grid grid-cols-[1fr_auto_1fr] items-center w-full">
                 <span className="justify-self-end text-right">
-                    {currentMatch.homeTeam.replace(/ice\s+hockey/i, '')}
+                    {currentMatch.homeTeam}
                 </span>
-
-                <div className="flex gap-2 items-center justify-center h-12">
-                    {currentMatch.hasEnded ||
-                    currentMatch.isLive ||
-                    currentMatch.predicted ? (
-                        <div className="h-12 mx-2 flex items-center">
-                            <span className="text-4xl font-bold">
-                                {currentMatch.isLive || currentMatch.hasEnded
-                                    ? (currentMatch.homeScore ?? '0')
-                                    : ''}
-                            </span>
-                            <span className="mx-2">-</span>
-                            <span className="text-4xl font-bold">
-                                {currentMatch.isLive || currentMatch.hasEnded
-                                    ? (currentMatch.awayScore ?? '0')
-                                    : ''}
-                            </span>
-                        </div>
+                <div className="mx-2 flex items-center">
+                    {currentMatch.hasEnded ? (
+                        <FinishedScore
+                            homeScore={currentMatch.homeScore}
+                            awayScore={currentMatch.awayScore}
+                        />
                     ) : (
-                        <div className="mx-2 flex items-center">
-                            <input
-                                className="bg-surface-container-lowest border-outline w-10 h-12 p-2 text-4xl font-bold text-center"
-                                placeholder="0"
-                                value={homePrediction}
-                                onChange={(event) =>
-                                    setHomePrediction(event.target.value)
-                                }
-                            />
-                            <span className="mx-2">-</span>
-                            <input
-                                className="bg-surface-container-lowest border-outline w-10 h-12 p-2 text-4xl font-bold text-center"
-                                placeholder="0"
-                                value={awayPrediction}
-                                onChange={(event) =>
-                                    setAwayPrediction(event.target.value)
-                                }
-                            />
-                        </div>
+                        <MatchInput
+                            homePrediction={homePrediction}
+                            awayPrediction={awayPrediction}
+                            setHomePrediction={setHomePrediction}
+                            setAwayPrediction={setAwayPrediction}
+                            canPredict={!currentMatch.predicted && !isLive}
+                        />
                     )}
                 </div>
                 <span className="justify-self-start text-left">
-                    {currentMatch.awayTeam.replace(/ice\s+hockey/i, '')}
+                    {currentMatch.awayTeam}
                 </span>
             </div>
             <div className="text-sm text-on-surface-variant mb-4 text-center">
@@ -158,7 +140,6 @@ const MatchCard = ({ match }: MatchCardProps) => {
                 disabled={!canSubmit()}
                 className={cn(
                     'mt-auto bg-tertiary-container rounded-md border-none text-on-tertiary-container',
-                    !canSubmit() && 'cursor-not-allowed opacity-50',
                 )}
             >
                 Submit Prediction {isPending && <LoadingSpinner />}

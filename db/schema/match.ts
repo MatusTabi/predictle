@@ -1,4 +1,5 @@
 import { sqliteTable, text, integer } from 'drizzle-orm/sqlite-core';
+import { tournament } from './tournament';
 
 export const matches = sqliteTable('matches', {
     id: text('id')
@@ -14,6 +15,10 @@ export const matches = sqliteTable('matches', {
 
     date: text('date').notNull(),
     time: text('time').notNull(),
+
+    tournamentId: text('tournamentId').references(() => tournament.id, {
+        onDelete: 'set null',
+    }),
 
     strGroup: text('group'),
 });

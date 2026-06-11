@@ -1,7 +1,7 @@
 import { db, Match, matches, predictions, Prediction } from '@/db';
 import { MatchSchema } from './schema';
 import z from 'zod';
-import { and, eq, sql } from 'drizzle-orm';
+import { and, desc, eq, isNull, lt, lte, or, sql } from 'drizzle-orm';
 
 export const create = async (match: MatchSchema | MatchSchema[]) => {
     const parsedMatch = z.array(MatchSchema).or(MatchSchema).parse(match);
@@ -84,6 +84,54 @@ export const getByDateWithUserPrediction = async (
         .where(eq(matches.date, date));
 };
 
+export const getByTournamentAndDateWithUserPrediction = async (
+    userId: string,
+    tournamentId: string,
+    date: string,
+): Promise<MatchWithUserPrediction[]> => {
+    return await db
+        .select({ match: matches, userPrediction: predictions })
+        .from(matches)
+        .leftJoin(
+            predictions,
+            and(
+                eq(predictions.matchId, matches.id),
+                eq(predictions.userId, userId),
+            ),
+        )
+        .where(
+            and(eq(matches.tournamentId, tournamentId), eq(matches.date, date)),
+        );
+};
+
+export type CreateTournamentMatchInput = {
+    tournamentId: string;
+    homeTeam: string;
+    awayTeam: string;
+    date: string;
+    time: string;
+};
+
+export const createTournamentMatch = async (
+    input: CreateTournamentMatchInput,
+): Promise<Match> => {
+    const [match] = await db
+        .insert(matches)
+        .values({
+            externalId: crypto.randomUUID(),
+            homeTeam: input.homeTeam,
+            awayTeam: input.awayTeam,
+            homeScore: null,
+            awayScore: null,
+            date: input.date,
+            time: input.time,
+            tournamentId: input.tournamentId,
+        })
+        .returning();
+
+    return match;
+};
+
 export const getByIdWithUserPrediction = async (
     userId: string,
     matchId: string,
@@ -102,4 +150,47 @@ export const getByIdWithUserPrediction = async (
         .limit(1);
 
     return rows[0] ?? null;
+};
+
+export const getUnendedByTournamentBefore = async (
+    tournamentId: string,
+    date: string,
+    time: string,
+): Promise<Match[]> => {
+    return await db
+        .select()
+        .from(matches)
+        .where(
+            and(
+                eq(matches.tournamentId, tournamentId),
+                or(
+                    lt(matches.date, date),
+                    and(eq(matches.date, date), lte(matches.time, time)),
+                ),
+                or(isNull(matches.homeScore), isNull(matches.awayScore)),
+            ),
+        )
+        .orderBy(desc(matches.date), desc(matches.time));
+};
+
+export const setTournamentMatchScore = async ({
+    tournamentId,
+    matchId,
+    homeScore,
+    awayScore,
+}: {
+    tournamentId: string;
+    matchId: string;
+    homeScore: number;
+    awayScore: number;
+}): Promise<Match | null> => {
+    const [match] = await db
+        .update(matches)
+        .set({ homeScore, awayScore })
+        .where(
+            and(eq(matches.id, matchId), eq(matches.tournamentId, tournamentId)),
+        )
+        .returning();
+
+    return match ?? null;
 };
