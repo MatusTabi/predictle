@@ -7,13 +7,8 @@ import {
     useReactTable,
 } from '@tanstack/react-table';
 import { Trophy } from 'lucide-react';
-import { sampleUsers, User } from './types';
-import { useReducer, useState } from 'react';
 import { cn } from '@/lib/utils';
-import {
-    TournamentParticipantDTO,
-    TournamentTableRow,
-} from '@/backend/leaderboard/types';
+import { TournamentTableRow } from '@/backend/leaderboard/types';
 
 const columnHelper = createColumnHelper<TournamentTableRow>();
 
@@ -72,56 +67,53 @@ type LeaderboardContentProps = {
 };
 
 const LeaderboardTable = ({ participants }: LeaderboardContentProps) => {
-    const [data, setData] = useState<TournamentTableRow[]>(() => [
-        ...participants,
-    ]);
-    const rerender = useReducer(() => ({}), {})[1];
-
     const table = useReactTable({
-        data,
+        data: participants,
         columns,
         getCoreRowModel: getCoreRowModel(),
     });
 
     return participants.length > 0 ? (
-        <table className="w-full border-collapse">
-            <thead>
-                {table.getHeaderGroups().map((headerGroup) => (
-                    <tr key={headerGroup.id}>
-                        {headerGroup.headers.map((header) => (
-                            <th
-                                key={header.id}
-                                className="border-b px-4 py-2 text-left text-sm font-semibold text-foreground"
-                            >
-                                {header.isPlaceholder
-                                    ? null
-                                    : flexRender(
-                                          header.column.columnDef.header,
-                                          header.getContext(),
-                                      )}
-                            </th>
-                        ))}
-                    </tr>
-                ))}
-            </thead>
-            <tbody>
-                {table.getRowModel().rows.map((row) => (
-                    <tr key={row.id}>
-                        {row.getVisibleCells().map((cell) => (
-                            <td
-                                key={cell.id}
-                                className="border-b px-4 py-2 text-sm text-foreground/70"
-                            >
-                                {flexRender(
-                                    cell.column.columnDef.cell,
-                                    cell.getContext(),
-                                )}
-                            </td>
-                        ))}
-                    </tr>
-                ))}
-            </tbody>
-        </table>
+        <div className="max-h-60 overflow-y-auto">
+            <table className="w-full border-collapse">
+                <thead className="sticky top-0 bg-surface">
+                    {table.getHeaderGroups().map((headerGroup) => (
+                        <tr key={headerGroup.id}>
+                            {headerGroup.headers.map((header) => (
+                                <th
+                                    key={header.id}
+                                    className="border-b px-4 py-2 text-left text-sm font-semibold text-foreground"
+                                >
+                                    {header.isPlaceholder
+                                        ? null
+                                        : flexRender(
+                                              header.column.columnDef.header,
+                                              header.getContext(),
+                                          )}
+                                </th>
+                            ))}
+                        </tr>
+                    ))}
+                </thead>
+                <tbody>
+                    {table.getRowModel().rows.map((row) => (
+                        <tr key={row.id}>
+                            {row.getVisibleCells().map((cell) => (
+                                <td
+                                    key={cell.id}
+                                    className="border-b px-4 py-2 text-sm text-foreground/70"
+                                >
+                                    {flexRender(
+                                        cell.column.columnDef.cell,
+                                        cell.getContext(),
+                                    )}
+                                </td>
+                            ))}
+                        </tr>
+                    ))}
+                </tbody>
+            </table>
+        </div>
     ) : (
         <div className="flex flex-col items-center justify-center py-10">
             <p className="text-foreground/70">No participants yet.</p>

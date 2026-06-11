@@ -1,28 +1,29 @@
-import { Tournament } from '@/backend/tournament/types';
+import { TournamentDTO } from '@/backend/tournament/types';
 import { Users } from 'lucide-react';
+import Link from 'next/link';
 import { Button } from '../ui/button';
 
 type ActiveTournamentComponentProps = {
-    tournaments: Tournament[];
+    tournaments: TournamentDTO[];
 };
 
 const ActiveTournamentComponent = ({
     tournaments,
 }: ActiveTournamentComponentProps) => (
     <>
-        <section className="flex flex-col items-center gap-4 w-full">
+        <section className="flex w-full flex-col items-center gap-4">
             <div className="flex justify-between w-full">
-                <h1 className="text-3xl font-bold text-on-surface">
+                <h1 className="text-2xl font-bold text-on-surface sm:text-3xl">
                     Your Active Tournaments
                 </h1>
             </div>
         </section>
-        <section className="w-full overflow-x-auto max-w-full">
-            <div className="flex gap-8 w-max min-w-max">
-                {tournaments.map((tournament, index) => (
+        <section className="w-full max-w-full overflow-x-hidden md:overflow-x-auto">
+            <div className="flex w-full flex-col gap-4 md:w-max md:min-w-max md:flex-row md:gap-8">
+                {tournaments.map((tournament) => (
                     <div
-                        key={index}
-                        className="border rounded-lg border-inverse-on-surface p-8 flex flex-col justify-center gap-2 w-120 h-64 shrink-0"
+                        key={tournament.id}
+                        className="flex min-h-64 w-full flex-col justify-center gap-2 rounded-lg border border-inverse-on-surface p-5 sm:p-8 md:h-64 md:w-120 md:shrink-0"
                     >
                         <div className="flex gap-2">
                             <span className="self-start bg-primary-container text-on-primary-container px-4 py-2 rounded-full border border-inverse-on-surface text-sm font-medium">
@@ -51,8 +52,13 @@ const ActiveTournamentComponent = ({
                                     : 'players'}
                             </span>
                         </div>
-                        <Button className="mt-2 w-1/2 h-12 p-2 font-semibold text-on-primary">
-                            Visit tournament
+                        <Button
+                            asChild
+                            className="mt-2 h-12 w-full p-2 font-semibold text-on-primary sm:w-1/2"
+                        >
+                            <Link href={`/tournament/${tournament.slug}`}>
+                                Visit tournament
+                            </Link>
                         </Button>
                     </div>
                 ))}

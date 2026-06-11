@@ -1,14 +1,19 @@
+'use client';
+
 import { Users } from 'lucide-react';
 import { Button } from '../ui/button';
-import { Tournament } from '@/backend/tournament/types';
+import { TournamentDTO } from '@/backend/tournament/types';
+import { useJoinTournamentMutation } from '@/backend/tournament/mutation';
 
 type TournamentCardProps = {
-    tournament: Tournament;
+    tournament: TournamentDTO;
 };
 
 const TournamentCard = ({ tournament }: TournamentCardProps) => {
+    const joinTournamentMutation = useJoinTournamentMutation();
+
     return (
-        <div className="border rounded-lg border-inverse-on-surface p-8 flex flex-col justify-center gap-2 w-80 h-64 shrink-0">
+        <div className="flex min-h-64 w-full flex-col justify-center gap-2 rounded-lg border border-inverse-on-surface p-5 sm:p-8 md:h-64 md:w-80 md:shrink-0">
             <div className="flex gap-2">
                 <span className="self-start bg-primary-container text-on-primary-container px-4 py-2 rounded-full border border-inverse-on-surface text-sm font-medium">
                     {tournament.category}
@@ -20,7 +25,7 @@ const TournamentCard = ({ tournament }: TournamentCardProps) => {
                     </span>
                 ) : (
                     <span className="self-start bg-primary-container text-on-primary-container px-4 py-2 rounded-full border border-inverse-on-surface text-sm font-medium">
-                        In 6 days
+                        Upcoming
                     </span>
                 )}
             </div>
@@ -32,8 +37,14 @@ const TournamentCard = ({ tournament }: TournamentCardProps) => {
                     {tournament.players === 1 ? 'player' : 'players'}
                 </span>
             </div>
-            <Button className="mt-2 w-3/4 h-12 p-2 font-semibold text-on-primary">
-                Join tournament
+            <Button
+                className="mt-2 h-12 w-full p-2 font-semibold text-on-primary sm:w-3/4"
+                disabled={joinTournamentMutation.isPending}
+                onClick={() => joinTournamentMutation.mutate(tournament.id)}
+            >
+                {joinTournamentMutation.isPending
+                    ? 'Joining...'
+                    : 'Join tournament'}
             </Button>
         </div>
     );
