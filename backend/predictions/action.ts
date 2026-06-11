@@ -1,32 +1,32 @@
-// 'use server';
+'use server';
 
-// import { auth } from '@/auth/auth';
-// import { submitPrediction } from './service';
-// import { getMatchById } from '@/backend/matches/service';
+import { auth } from '@/auth/auth';
+import { submitPrediction } from './service';
+import { getMatchById } from '@/backend/matches/service';
 
-// export type SubmitPredictionInput = {
-//     matchId: string;
-//     homeScore: number;
-//     awayScore: number;
-// };
+export type SubmitPredictionInput = {
+    matchId: string;
+    homeScore: number;
+    awayScore: number;
+};
 
-// export const submitPredictionAction = async (
-//     payload: SubmitPredictionInput,
-// ) => {
-//     const session = await auth();
+export const submitPredictionAction = async (
+    payload: SubmitPredictionInput,
+) => {
+    const session = await auth();
 
-//     if (!session?.user?.id) {
-//         throw new Error('Unauthorized');
-//     }
+    if (!session?.user?.id) {
+        throw new Error('Unauthorized');
+    }
 
-//     await submitPrediction({
-//         userId: session.user.id,
-//         matchId: payload.matchId,
-//         homeScore: payload.homeScore,
-//         awayScore: payload.awayScore,
-//     });
+    await submitPrediction({
+        userId: session.user.id,
+        matchId: payload.matchId,
+        homeScore: payload.homeScore,
+        awayScore: payload.awayScore,
+    });
 
-//     const match = await getMatchById(payload.matchId);
+    const match = await getMatchById(payload.matchId);
 
-//     return { success: true, match };
-// };
+    return { success: true, match };
+};

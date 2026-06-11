@@ -2,7 +2,11 @@ import {
     getTournamentBySlug,
     getTournamentParticipants,
 } from '@/backend/tournament/service';
-import { Users } from 'lucide-react';
+import PredictionCallout from '@/components/tournament/prediction-callout';
+import LeaderboardTable from '@/components/table/leaderboard/leaderboard';
+import { Button } from '@/components/ui/button';
+import { Pencil, Users } from 'lucide-react';
+import Link from 'next/link';
 import { notFound } from 'next/navigation';
 
 type TournamentDetailPageProps = {
@@ -25,7 +29,18 @@ const TournamentDetailPage = async ({ params }: TournamentDetailPageProps) => {
 
     return (
         <main className="flex flex-col flex-1 min-w-0 gap-6 p-8">
-            <section className="border border-inverse-on-surface rounded-lg p-8 bg-primary-container">
+            <section className="border border-inverse-on-surface rounded-lg p-8 bg-primary-container relative">
+                <Button
+                    asChild
+                    className="absolute right-4 top-4 h-12 px-4 font-semibold text-on-primary"
+                >
+                    <Link
+                        href={`/tournament/${tournament.slug}/matches/create`}
+                    >
+                        <Pencil className="w-5 h-5" />
+                        Add matches
+                    </Link>
+                </Button>
                 <div className="flex flex-wrap gap-2">
                     <span className="self-start bg-surface text-on-surface px-4 py-2 rounded-full border border-inverse-on-surface text-sm font-medium">
                         {tournament.category}
@@ -34,9 +49,11 @@ const TournamentDetailPage = async ({ params }: TournamentDetailPageProps) => {
                         {tournament.isLive ? 'Live' : 'Upcoming'}
                     </span>
                 </div>
-                <h1 className="text-5xl font-bold mt-6 text-on-surface">
-                    {tournament.title}
-                </h1>
+                <div className="mt-6 pr-40">
+                    <h1 className="text-5xl font-bold text-on-surface">
+                        {tournament.title}
+                    </h1>
+                </div>
                 <div className="flex flex-wrap gap-6 mt-6 text-on-surface/70">
                     <span>Starts {startDate}</span>
                     <span className="flex items-center gap-2">
@@ -47,50 +64,15 @@ const TournamentDetailPage = async ({ params }: TournamentDetailPageProps) => {
                 </div>
             </section>
 
-            <section className="border border-inverse-on-surface rounded-lg p-8">
-                <h2 className="text-2xl font-bold text-on-surface">
-                    Leaderboard
-                </h2>
-                {participants.length === 0 ? (
-                    <p className="mt-4 text-on-surface/70">
-                        No participants have joined this tournament yet.
-                    </p>
-                ) : (
-                    <div className="mt-4 overflow-x-auto">
-                        <table className="w-full text-left">
-                            <thead className="border-b border-on-surface/20">
-                                <tr>
-                                    <th className="py-3 pr-4">Rank</th>
-                                    <th className="py-3 pr-4">Player</th>
-                                    <th className="py-3 pr-4">Predictions</th>
-                                    <th className="py-3 pr-4">Points</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {participants.map((participant) => (
-                                    <tr
-                                        key={participant.id}
-                                        className="border-b border-on-surface/10"
-                                    >
-                                        <td className="py-3 pr-4">
-                                            {participant.rank}
-                                        </td>
-                                        <td className="py-3 pr-4">
-                                            {participant.userName}
-                                        </td>
-                                        <td className="py-3 pr-4">
-                                            {participant.totalPredictions ?? 0}
-                                        </td>
-                                        <td className="py-3 pr-4">
-                                            {participant.points ?? 0}
-                                        </td>
-                                    </tr>
-                                ))}
-                            </tbody>
-                        </table>
-                    </div>
-                )}
-            </section>
+            <div className="grid gap-6 xl:grid-cols-[minmax(0,1fr)_22rem]">
+                <section className="border border-inverse-on-surface rounded-lg p-8 min-w-0 overflow-x-auto">
+                    <h2 className="text-2xl font-bold text-on-surface mb-4">
+                        Leaderboard
+                    </h2>
+                    <LeaderboardTable participants={participants} />
+                </section>
+                <PredictionCallout tournamentSlug={tournament.slug} />
+            </div>
         </main>
     );
 };

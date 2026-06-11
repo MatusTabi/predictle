@@ -12,18 +12,21 @@ const main = async () => {
 
     console.log('Seeding database...');
 
+    await db.delete(schema.predictions);
+    await db.delete(schema.matches);
+    await db.delete(schema.tournamentParticipant);
     await db.delete(schema.users);
     await db.delete(schema.tournament);
-    await db.delete(schema.tournamentParticipant);
 
     await seedUsers(db);
     await seedTournaments(db);
+    await seedMatches(db);
     await seedTournamentParticipants(db);
     console.log('Database seeded successfully!');
 };
 
 const seedUsers = async (db: ReturnType<typeof drizzle>) => {
-    for (let i = 0; i < 3; i++) {
+    for (let i = 0; i < 6; i++) {
         await db.insert(schema.users).values({
             id: faker.string.uuid(),
             name: faker.person.fullName(),
@@ -44,6 +47,41 @@ const seedTournaments = async (db: ReturnType<typeof drizzle>) => {
             category: faker.word.noun(),
             startDate: faker.date.future().toISOString(),
         });
+    }
+};
+
+const formatDate = (date: Date) => {
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+
+    return `${year}-${month}-${day}`;
+};
+
+const seedMatches = async (db: ReturnType<typeof drizzle>) => {
+    const tournaments = await db.select().from(schema.tournament);
+    const dateOffsets = [-1, 0, 1];
+
+    for (const tournament of tournaments) {
+        for (const offset of dateOffsets) {
+            const date = new Date();
+            date.setDate(date.getDate() + offset);
+
+            for (let i = 0; i < 2; i++) {
+                await db.insert(schema.matches).values({
+                    id: faker.string.uuid(),
+                    externalId: `${tournament.slug}-${offset}-${i}`,
+                    homeTeam: faker.location.country(),
+                    awayTeam: faker.location.country(),
+                    homeScore: null,
+                    awayScore: null,
+                    date: formatDate(date),
+                    time: `${String(18 + i).padStart(2, '0')}:00:00`,
+                    tournamentId: tournament.id,
+                    strGroup: `Group ${i + 1}`,
+                });
+            }
+        }
     }
 };
 

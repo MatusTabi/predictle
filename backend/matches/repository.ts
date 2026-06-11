@@ -84,6 +84,54 @@ export const getByDateWithUserPrediction = async (
         .where(eq(matches.date, date));
 };
 
+export const getByTournamentAndDateWithUserPrediction = async (
+    userId: string,
+    tournamentId: string,
+    date: string,
+): Promise<MatchWithUserPrediction[]> => {
+    return await db
+        .select({ match: matches, userPrediction: predictions })
+        .from(matches)
+        .leftJoin(
+            predictions,
+            and(
+                eq(predictions.matchId, matches.id),
+                eq(predictions.userId, userId),
+            ),
+        )
+        .where(
+            and(eq(matches.tournamentId, tournamentId), eq(matches.date, date)),
+        );
+};
+
+export type CreateTournamentMatchInput = {
+    tournamentId: string;
+    homeTeam: string;
+    awayTeam: string;
+    date: string;
+    time: string;
+};
+
+export const createTournamentMatch = async (
+    input: CreateTournamentMatchInput,
+): Promise<Match> => {
+    const [match] = await db
+        .insert(matches)
+        .values({
+            externalId: crypto.randomUUID(),
+            homeTeam: input.homeTeam,
+            awayTeam: input.awayTeam,
+            homeScore: null,
+            awayScore: null,
+            date: input.date,
+            time: input.time,
+            tournamentId: input.tournamentId,
+        })
+        .returning();
+
+    return match;
+};
+
 export const getByIdWithUserPrediction = async (
     userId: string,
     matchId: string,

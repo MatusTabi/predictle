@@ -5,9 +5,11 @@ import {
     create,
     getAll,
     getAllWithUserPrediction,
+    getByTournamentAndDateWithUserPrediction,
     getByDateWithUserPrediction,
     getById,
     getByIdWithUserPrediction,
+    createTournamentMatch,
 } from './repository';
 import { dbMatchToDtoList, dbMatchWithPredictionToDtoList } from './mapper';
 
@@ -69,4 +71,66 @@ export const getMatchById = async (matchId: string) => {
     }
 
     return dbMatchToDtoList([match])[0] ?? null;
+};
+
+export const getTournamentMatchesByDate = async (
+    tournamentId: string,
+    date: string,
+) => {
+    const session = await auth();
+
+    if (!session?.user?.id) {
+        return [];
+    }
+
+    const rows = await getByTournamentAndDateWithUserPrediction(
+        session.user.id,
+        tournamentId,
+        date,
+    );
+
+    return dbMatchWithPredictionToDtoList(rows);
+};
+
+export type CreateTournamentMatchPayload = {
+    tournamentId: string;
+    homeTeam: string;
+    awayTeam: string;
+    startsAt: string;
+};
+
+export const addTournamentMatch = async ({
+    tournamentId,
+    homeTeam,
+    awayTeam,
+    startsAt,
+}: CreateTournamentMatchPayload) => {
+    const trimmedHomeTeam = homeTeam.trim();
+    const trimmedAwayTeam = awayTeam.trim();
+
+    if (!trimmedHomeTeam) {
+        throw new Error('Home team is required');
+    }
+
+    if (!trimmedAwayTeam) {
+        throw new Error('Away team is required');
+    }
+
+    if (!startsAt) {
+        throw new Error('Start date is required');
+    }
+
+    const startDate = new Date(startsAt);
+
+    if (Number.isNaN(startDate.getTime())) {
+        throw new Error('Start date is invalid');
+    }
+
+    return await createTournamentMatch({
+        tournamentId,
+        homeTeam: trimmedHomeTeam,
+        awayTeam: trimmedAwayTeam,
+        date: startDate.toISOString().slice(0, 10),
+        time: startDate.toTimeString().slice(0, 8),
+    });
 };

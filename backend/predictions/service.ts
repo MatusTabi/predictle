@@ -1,17 +1,21 @@
 import { incrementParticipantTotalPredictions } from '../leaderboard/repository';
-import { getUsernameById } from '../user/repository';
+import { getById } from '../matches/repository';
 import { createPrediction } from './repository';
 import { PredictionRequestDTO } from './types';
 
-// export const submitPrediction = async (prediction: PredictionRequestDTO) => {
-//     const userName = await getUsernameById(prediction.userId);
+export const submitPrediction = async (prediction: PredictionRequestDTO) => {
+    const match = await getById(prediction.matchId);
 
-//     if (!userName) {
-//         throw new Error('User not found');
-//     }
+    if (!match) {
+        throw new Error('Match not found');
+    }
 
-//     await ensureTournamentParticipation(prediction.userId, userName);
-//     await incrementParticipantTotalPredictions(prediction.userId);
+    const createdPrediction = await createPrediction(prediction);
 
-//     return await createPrediction(prediction);
-// };
+    await incrementParticipantTotalPredictions(
+        prediction.userId,
+        match.tournamentId ?? undefined,
+    );
+
+    return createdPrediction;
+};
