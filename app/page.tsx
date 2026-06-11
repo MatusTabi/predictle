@@ -18,7 +18,9 @@ const HomePage = () => (
                 void signIn('google');
             }}
         >
-            <Button type="submit">Sign in with Google</Button>
+            <Button type="submit" className="text-on-primary">
+                Sign in with Google
+            </Button>
         </form>
     </div>
 );
