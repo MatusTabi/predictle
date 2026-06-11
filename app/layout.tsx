@@ -4,6 +4,7 @@ import './globals.css';
 import Navbar from '@/components/navbar/navbar';
 import { cn } from '@/lib/utils';
 import Providers from '@/components/providers';
+import Sidebar from '@/components/sidebar/sidebar';
 
 const geist = Geist({ subsets: ['latin'], variable: '--font-sans' });
 
@@ -37,8 +38,11 @@ export default function RootLayout({
             <body className="relative min-h-screen flex flex-col">
                 <Providers>
                     <Navbar />
-                    <main className="flex flex-col flex-1 min-h-0 z-10 inset-0 h-full w-full bg-[linear-gradient(to_right,#73737320_1px,transparent_1px),linear-gradient(to_bottom,#73737320_1px,transparent_1px)] bg-size-[20px_20px]">
-                        {children}
+                    <main className="z-10 flex h-full w-full flex-1 min-h-0 bg-[linear-gradient(to_right,#73737320_1px,transparent_1px),linear-gradient(to_bottom,#73737320_1px,transparent_1px)] bg-size-[20px_20px]">
+                        <Sidebar />
+                        <div className="flex min-w-0 flex-1 flex-col">
+                            {children}
+                        </div>
                     </main>
                 </Providers>
             </body>
