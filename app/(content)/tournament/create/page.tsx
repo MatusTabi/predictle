@@ -1,5 +1,5 @@
 import { createTournamentAction } from '@/backend/tournament/action';
-import { Button } from '@/components/ui/button';
+import CreateTournamentSubmitButton from '@/components/tournament/create-tournament-submit-button';
 
 const CreateTournamentPage = () => {
     return (
@@ -48,9 +48,7 @@ const CreateTournamentPage = () => {
                     />
                 </label>
 
-                <Button className="mt-2 h-12 w-fit px-6 font-semibold text-on-primary">
-                    Create tournament
-                </Button>
+                <CreateTournamentSubmitButton />
             </form>
         </main>
     );
