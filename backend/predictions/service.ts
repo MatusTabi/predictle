@@ -1,6 +1,10 @@
 import { incrementParticipantTotalPredictions } from '../leaderboard/repository';
 import { getById } from '../matches/repository';
-import { createPrediction } from './repository';
+import {
+    createPrediction,
+    getPredictionByUserAndMatch,
+    updatePrediction,
+} from './repository';
 import { PredictionRequestDTO } from './types';
 
 export const submitPrediction = async (prediction: PredictionRequestDTO) => {
@@ -16,12 +20,21 @@ export const submitPrediction = async (prediction: PredictionRequestDTO) => {
         throw new Error('Match has already started');
     }
 
-    const createdPrediction = await createPrediction(prediction);
-
-    await incrementParticipantTotalPredictions(
+    const existingPrediction = await getPredictionByUserAndMatch(
         prediction.userId,
-        match.tournamentId ?? undefined,
+        prediction.matchId,
     );
 
-    return createdPrediction;
+    const savedPrediction = existingPrediction
+        ? await updatePrediction(prediction)
+        : await createPrediction(prediction);
+
+    if (!existingPrediction) {
+        await incrementParticipantTotalPredictions(
+            prediction.userId,
+            match.tournamentId ?? undefined,
+        );
+    }
+
+    return savedPrediction;
 };
