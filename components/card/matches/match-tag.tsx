@@ -1,5 +1,5 @@
 import { cn } from '@/lib/utils';
-import { CircleCheck } from 'lucide-react';
+import { CircleCheck, Flag, LockOpen } from 'lucide-react';
 
 type MatchTagProps = {
     className?: string;
@@ -30,19 +30,21 @@ const PredictedMatchTag = ({ className }: MatchTagProps) => (
 );
 
 const OpenMatchTag = () => (
-    <div className="bg-tertiary-container text-on-tertiary-container rounded-bl-lg rounded-tr-lg px-3 py-2 text-xs font-semibold">
-        OPEN
+    <div className="flex items-center gap-2 bg-tertiary-container text-on-tertiary-container rounded-bl-lg rounded-tr-lg px-3 py-2 text-xs font-semibold">
+        <LockOpen className="text-on-tertiary-container" size={14} />
+        <span className="text-on-tertiary-container">OPEN</span>
     </div>
 );
 
 const FinishedTag = ({ className }: MatchTagProps) => (
     <div
         className={cn(
-            'bg-secondary text-on-secondary rounded-bl-lg rounded-tr-lg px-3 py-2 text-xs font-semibold',
+            'flex items-center gap-2 bg-secondary text-on-secondary rounded-bl-lg rounded-tr-lg px-3 py-2 text-xs font-semibold',
             className,
         )}
     >
-        FINISHED
+        <Flag className="text-on-secondary" size={14} />
+        <span className="text-on-secondary">FINISHED</span>
     </div>
 );
 
