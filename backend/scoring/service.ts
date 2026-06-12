@@ -4,14 +4,12 @@ import { and, eq, isNotNull } from 'drizzle-orm';
 type ParticipantStats = {
     correctWinners: number;
     correctScores: number;
-    totalPredictions: number;
     points: number;
 };
 
 const emptyStats = (): ParticipantStats => ({
     correctWinners: 0,
     correctScores: 0,
-    totalPredictions: 0,
     points: 0,
 });
 
@@ -62,8 +60,6 @@ export const scoreFinishedTournamentMatches = async () => {
             const key = `${row.tournamentId}:${row.userId}`;
             const stats = statsByParticipant.get(key) ?? emptyStats();
 
-            stats.totalPredictions += 1;
-
             if (
                 row.homePrediction === row.homeScore &&
                 row.awayPrediction === row.awayScore
@@ -94,7 +90,6 @@ export const scoreFinishedTournamentMatches = async () => {
                 .set({
                     correctWinners: stats.correctWinners,
                     correctScores: stats.correctScores,
-                    totalPredictions: stats.totalPredictions,
                     points: stats.points,
                 })
                 .where(eq(tournamentParticipant.id, participant.id));
