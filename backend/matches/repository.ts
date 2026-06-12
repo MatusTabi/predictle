@@ -1,7 +1,7 @@
-import { db, Match, matches, predictions, Prediction } from '@/db';
+import { db, Match, matches, predictions, Prediction, users } from '@/db';
 import { MatchSchema } from './schema';
 import z from 'zod';
-import { and, desc, eq, isNull, lt, lte, or, sql } from 'drizzle-orm';
+import { and, asc, desc, eq, isNull, lt, lte, or, sql } from 'drizzle-orm';
 
 export const create = async (match: MatchSchema | MatchSchema[]) => {
     const parsedMatch = z.array(MatchSchema).or(MatchSchema).parse(match);
@@ -102,6 +102,32 @@ export const getByTournamentAndDateWithUserPrediction = async (
         .where(
             and(eq(matches.tournamentId, tournamentId), eq(matches.date, date)),
         );
+};
+
+export type TournamentMatchPredictionRow = {
+    match: Match;
+    prediction: Prediction | null;
+    user: { id: string; name: string | null } | null;
+};
+
+export const getByTournamentWithPredictions = async (
+    tournamentId: string,
+    date: string,
+): Promise<TournamentMatchPredictionRow[]> => {
+    return await db
+        .select({
+            match: matches,
+            prediction: predictions,
+            user: {
+                id: users.id,
+                name: users.name,
+            },
+        })
+        .from(matches)
+        .leftJoin(predictions, eq(predictions.matchId, matches.id))
+        .leftJoin(users, eq(predictions.userId, users.id))
+        .where(and(eq(matches.tournamentId, tournamentId), eq(matches.date, date)))
+        .orderBy(asc(matches.date), asc(matches.time));
 };
 
 export type CreateTournamentMatchInput = {
