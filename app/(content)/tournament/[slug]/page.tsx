@@ -5,7 +5,7 @@ import {
 import PredictionCallout from '@/components/tournament/prediction-callout';
 import LeaderboardTable from '@/components/table/leaderboard/leaderboard';
 import { Button } from '@/components/ui/button';
-import { Pencil, Users } from 'lucide-react';
+import { CalendarDays, Pencil, Users } from 'lucide-react';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 
@@ -30,25 +30,39 @@ const TournamentDetailPage = async ({ params }: TournamentDetailPageProps) => {
     return (
         <main className="flex flex-col flex-1 min-w-0 gap-6 p-8">
             <section className="border border-inverse-on-surface rounded-lg p-8 bg-primary-container relative">
-                <Button
-                    asChild
-                    className="absolute right-4 top-4 h-12 w-12 px-0 font-semibold text-on-primary sm:w-auto sm:px-4"
-                >
-                    <Link
-                        href={`/tournament/${tournament.slug}/matches/edit`}
-                        aria-label="Edit matches"
-                        title="Edit matches"
+                <div className="absolute right-4 top-4 flex gap-2">
+                    <Button
+                        asChild
+                        className="h-12 w-12 px-0 font-semibold text-on-primary sm:w-auto sm:px-4"
                     >
-                        <Pencil className="w-5 h-5" />
-                        <span className="hidden sm:inline">Edit matches</span>
-                    </Link>
-                </Button>
+                        <Link
+                            href={`/tournament/${tournament.slug}/matches`}
+                            aria-label="View matches"
+                            title="View matches"
+                        >
+                            <CalendarDays className="w-5 h-5" />
+                            <span className="hidden sm:inline">Matches</span>
+                        </Link>
+                    </Button>
+                    <Button
+                        asChild
+                        className="h-12 w-12 px-0 font-semibold text-on-primary sm:w-auto sm:px-4"
+                    >
+                        <Link
+                            href={`/tournament/${tournament.slug}/matches/edit`}
+                            aria-label="Edit matches"
+                            title="Edit matches"
+                        >
+                            <Pencil className="w-5 h-5" />
+                            <span className="hidden sm:inline">
+                                Edit matches
+                            </span>
+                        </Link>
+                    </Button>
+                </div>
                 <div className="flex flex-wrap gap-2">
                     <span className="self-start bg-surface text-on-surface px-4 py-2 rounded-full border border-inverse-on-surface text-sm font-medium">
                         {tournament.category}
-                    </span>
-                    <span className="self-start bg-surface text-on-surface px-4 py-2 rounded-full border border-inverse-on-surface text-sm font-medium">
-                        {tournament.isLive ? 'Live' : 'Upcoming'}
                     </span>
                 </div>
                 <div className="mt-6 pr-40">
