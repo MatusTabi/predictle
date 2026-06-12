@@ -122,9 +122,9 @@ export const addTournamentMatch = async ({
         throw new Error('Start date is required');
     }
 
-    const startDate = new Date(startsAt);
+    const [date, time] = startsAt.split('T');
 
-    if (Number.isNaN(startDate.getTime())) {
+    if (!date || !time) {
         throw new Error('Start date is invalid');
     }
 
@@ -132,19 +132,32 @@ export const addTournamentMatch = async ({
         tournamentId,
         homeTeam: trimmedHomeTeam,
         awayTeam: trimmedAwayTeam,
-        date: startDate.toISOString().slice(0, 10),
-        time: startDate.toTimeString().slice(0, 8),
+        date,
+        time: time.length === 5 ? `${time}:00` : time.slice(0, 8),
     });
 };
 
-const toLocalDateAndTime = (date: Date) => {
-    const localDate = new Date(
-        date.getTime() - date.getTimezoneOffset() * 60_000,
+const appTimeZone = process.env.APP_TIME_ZONE ?? 'Europe/Bratislava';
+
+const toAppDateAndTime = (date: Date) => {
+    const parts = new Intl.DateTimeFormat('en-CA', {
+        timeZone: appTimeZone,
+        year: 'numeric',
+        month: '2-digit',
+        day: '2-digit',
+        hour: '2-digit',
+        minute: '2-digit',
+        second: '2-digit',
+        hour12: false,
+    }).formatToParts(date);
+
+    const values = Object.fromEntries(
+        parts.map((part) => [part.type, part.value]),
     );
 
     return {
-        date: localDate.toISOString().slice(0, 10),
-        time: localDate.toISOString().slice(11, 19),
+        date: `${values.year}-${values.month}-${values.day}`,
+        time: `${values.hour}:${values.minute}:${values.second}`,
     };
 };
 
@@ -152,7 +165,7 @@ export const getRecentUnendedTournamentMatches = async (
     tournamentId: string,
 ) => {
     const cutoff = new Date(Date.now() - 4 * 60 * 60 * 1000);
-    const { date, time } = toLocalDateAndTime(cutoff);
+    const { date, time } = toAppDateAndTime(cutoff);
 
     return dbMatchToDtoList(
         await getUnendedByTournamentBefore(tournamentId, date, time),
