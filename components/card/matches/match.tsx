@@ -27,8 +27,13 @@ const liveWindowMs = 2 * 60 * 60 * 1000;
 
 const MatchCard = ({ match }: MatchCardProps) => {
     const [currentMatch, setCurrentMatch] = useState(match);
-    const [homePrediction, setHomePrediction] = useState('');
-    const [awayPrediction, setAwayPrediction] = useState('');
+    const [isEditing, setIsEditing] = useState(!match.predicted);
+    const [homePrediction, setHomePrediction] = useState(
+        match.userPrediction?.homeScore.toString() ?? '',
+    );
+    const [awayPrediction, setAwayPrediction] = useState(
+        match.userPrediction?.awayScore.toString() ?? '',
+    );
     const { mutate, isPending } = useSubmitPredictionMutation();
 
     const now = new Date();
@@ -37,10 +42,12 @@ const MatchCard = ({ match }: MatchCardProps) => {
     const isLive =
         hasStarted && now < new Date(matchStartDate.getTime() + liveWindowMs);
     const shouldShowFinishedTag = currentMatch.hasEnded || (hasStarted && !isLive);
+    const predictionsClosed = hasStarted || currentMatch.hasEnded;
+    const canEdit = currentMatch.predicted && !hasStarted && !currentMatch.hasEnded;
 
     const canSubmit = () => {
         if (
-            currentMatch.predicted ||
+            !isEditing ||
             hasStarted ||
             currentMatch.hasEnded ||
             isPending
@@ -71,6 +78,8 @@ const MatchCard = ({ match }: MatchCardProps) => {
             },
             {
                 onSuccess: (data) => {
+                    setIsEditing(false);
+
                     if (data?.match) {
                         setCurrentMatch(data.match);
                     } else {
@@ -140,7 +149,7 @@ const MatchCard = ({ match }: MatchCardProps) => {
                             awayPrediction={awayPrediction}
                             setHomePrediction={setHomePrediction}
                             setAwayPrediction={setAwayPrediction}
-                            canPredict={!currentMatch.predicted && !hasStarted}
+                            canPredict={isEditing && !hasStarted}
                         />
                     )}
                 </div>
@@ -154,16 +163,41 @@ const MatchCard = ({ match }: MatchCardProps) => {
                     : 'Not predicted'}
             </div>
 
-            <Button
-                type="button"
-                onClick={handleSubmit}
-                disabled={!canSubmit()}
-                className={cn(
-                    'mt-auto bg-tertiary-container rounded-md border-none text-on-tertiary-container',
-                )}
-            >
-                Submit Prediction {isPending && <LoadingSpinner />}
-            </Button>
+            {predictionsClosed ? (
+                <Button
+                    type="button"
+                    disabled
+                    className={cn(
+                        'mt-auto bg-tertiary-container rounded-md border-none text-on-tertiary-container',
+                    )}
+                >
+                    Predictions closed
+                </Button>
+            ) : canEdit && !isEditing ? (
+                <Button
+                    type="button"
+                    onClick={() => setIsEditing(true)}
+                    className={cn(
+                        'mt-auto bg-tertiary-container rounded-md border-none text-on-tertiary-container',
+                    )}
+                >
+                    Edit prediction
+                </Button>
+            ) : (
+                <Button
+                    type="button"
+                    onClick={handleSubmit}
+                    disabled={!canSubmit()}
+                    className={cn(
+                        'mt-auto bg-tertiary-container rounded-md border-none text-on-tertiary-container',
+                    )}
+                >
+                    {currentMatch.predicted
+                        ? 'Save prediction'
+                        : 'Submit Prediction'}{' '}
+                    {isPending && <LoadingSpinner />}
+                </Button>
+            )}
         </div>
     );
 };

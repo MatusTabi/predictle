@@ -12,8 +12,13 @@ import {
     createTournamentMatch,
     getUnendedByTournamentBefore,
     setTournamentMatchScore,
+    getByTournamentWithPredictions,
 } from './repository';
 import { dbMatchToDtoList, dbMatchWithPredictionToDtoList } from './mapper';
+import type {
+    TournamentMatchesByDayDTO,
+    TournamentMatchWithPredictionsDTO,
+} from './types';
 
 export const syncMatchesFromSportsDb = async () => {
     const data = await sportsDbFetch(
@@ -92,6 +97,59 @@ export const getTournamentMatchesByDate = async (
     );
 
     return dbMatchWithPredictionToDtoList(rows);
+};
+
+export const getTournamentMatchesWithPredictions = async (
+    tournamentId: string,
+    date: string,
+): Promise<TournamentMatchesByDayDTO[]> => {
+    const rows = await getByTournamentWithPredictions(tournamentId, date);
+    const matchesById = new Map<string, TournamentMatchWithPredictionsDTO>();
+
+    for (const { match, prediction, user } of rows) {
+        const hasScore = match.homeScore !== null && match.awayScore !== null;
+        const existingMatch = matchesById.get(match.id);
+        const matchDto =
+            existingMatch ??
+            ({
+                id: match.id,
+                externalId: match.externalId,
+                homeTeam: match.homeTeam,
+                awayTeam: match.awayTeam,
+                homeScore: match.homeScore,
+                awayScore: match.awayScore,
+                startTime: match.time,
+                date: match.date,
+                hasEnded: hasScore,
+                predictions: [],
+            } satisfies TournamentMatchWithPredictionsDTO);
+
+        if (!existingMatch) {
+            matchesById.set(match.id, matchDto);
+        }
+
+        if (prediction && user) {
+            matchDto.predictions.push({
+                userId: user.id,
+                userName: user.name || 'Unknown',
+                homeScore: prediction.homeScore,
+                awayScore: prediction.awayScore,
+            });
+        }
+    }
+
+    const daysByDate = new Map<string, TournamentMatchWithPredictionsDTO[]>();
+
+    for (const match of matchesById.values()) {
+        const dayMatches = daysByDate.get(match.date) ?? [];
+        dayMatches.push(match);
+        daysByDate.set(match.date, dayMatches);
+    }
+
+    return Array.from(daysByDate.entries()).map(([date, matches]) => ({
+        date,
+        matches,
+    }));
 };
 
 export type CreateTournamentMatchPayload = {
