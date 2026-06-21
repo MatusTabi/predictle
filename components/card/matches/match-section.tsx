@@ -10,7 +10,7 @@ const MatchSection = ({ match }: MatchSectionProps) => (
         <span className="rounded-2xl bg-primary text-on-primary p-2 mb-4">
             {match[0].startTime.slice(0, 5)}
         </span>
-        <div className="gap-4 flex w-full">
+        <div className="gap-4 flex flex-col sm:flex-row w-full">
             {match.map((m) => (
                 <MatchCard key={m.id} match={m} />
             ))}
